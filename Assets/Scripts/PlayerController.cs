@@ -23,6 +23,10 @@ public class PlayerController : MonoBehaviour
     public event EventHandler<RotateEventArgs> RotateEntity;
     private Vector3 _sidewayDirection;
     public Transform entityPrefab;
+    public Transform formation;
+    public List<Transform> entitySpawnPositions;
+    public int totalPowerLevel;
+    private TextMesh plText;
     public enum TurningState
     {
         forward,
@@ -41,9 +45,15 @@ public class PlayerController : MonoBehaviour
         _turnState = TurningState.forward;
         entityRotatedSideway = false;
     }
-    
+    private void Start() {
+        plText = GetComponentInChildren<TextMesh>();
+        UpdatePowerLevel();
+        foreach (Transform pos in formation)
+            entitySpawnPositions.Add(pos);
+    }
     private void Update() {
         ProcessInput();
+        LevelManager.instance.CheckBoundary(transform);
     }
     private void FixedUpdate() {
         transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime,Space.World);
@@ -76,16 +86,28 @@ public class PlayerController : MonoBehaviour
     public void MoveEntitySideWay()
     {
         transform.Translate(_sidewayDirection * sidewaySpeed * Time.deltaTime,Space.World);
+     
+      
         if(_turnState!=TurningState.forward && entityRotatedSideway == false)
         {
             OnRotateEntity(new RotateEventArgs(_sidewayDirection.x*rotationAngle));
             entityRotatedSideway = true;
         }
-
     }
     protected virtual void OnRotateEntity(RotateEventArgs e)
     {
         // Debug.Log("entity turning event called");
         RotateEntity?.Invoke(this,e);
+    }
+    public Transform GetEntitySpawnPosition()
+    {
+        foreach(Transform pos in entitySpawnPositions)
+            if (pos.childCount<1)
+                return pos;
+        return null;
+    }
+    public void UpdatePowerLevel()
+    {
+        plText.text=totalPowerLevel.ToString();
     }
 }

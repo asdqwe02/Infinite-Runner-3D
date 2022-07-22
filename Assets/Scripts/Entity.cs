@@ -6,6 +6,7 @@ public class Entity : MonoBehaviour
 {
     Rigidbody _rb;
     public Rigidbody rb { get => _rb; set => _rb = value; }
+    public int powerLevel;
     void Start()
     {
     }
