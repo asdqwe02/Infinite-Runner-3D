@@ -26,8 +26,6 @@ public class ObjectPooler : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-    }
-    private void Start() {
         pooledObjects = new List<GameObject>();
         foreach (ObjectPoolItem item in itemsToPool) 
         {
@@ -39,13 +37,21 @@ public class ObjectPooler : MonoBehaviour
             }
         }
     }
+    private void Start() {
+     
+    }
     public GameObject GetPooledObject(string tag) {
-        for (int i = 0; i < pooledObjects.Count; i++) {
-            if (pooledObjects[i].activeInHierarchy==false && pooledObjects[i].tag == tag) 
-            {
-                return pooledObjects[i];
-            }
+        foreach(GameObject pObject in pooledObjects)
+        {
+            if (pObject.activeInHierarchy == false && pObject.tag == tag)
+                return pObject;
         }
+        // for (int i = 0; i < pooledObjects.Count; i++) {
+        //     if (pooledObjects[i].activeInHierarchy==false && pooledObjects[i].tag == tag) 
+        //     {
+        //         return pooledObjects[i];
+        //     }
+        // }
         foreach (ObjectPoolItem item in itemsToPool) 
         {
             if (item.objectToPool.tag == tag) 

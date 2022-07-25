@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Linq;
 public class MultiplyPlate : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -15,35 +15,17 @@ public class MultiplyPlate : MonoBehaviour
         DIVIDE,
     }
     public Expression expression;
-
+    public bool trigger;
     void Start()
     {
         tm = GetComponentInChildren<TextMesh>();
         RollMultiplyPlate();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        trigger = false;
     }
     private void OnTriggerEnter(Collider other) {
         if (other.CompareTag("Player"))
         {
-            LevelManager.instance.counter++;
-            LevelManager.instance.levelPassed++;
-            if (PlayerController.instance.totalPowerLevel < CalculatePowerLevel())
-            {
-                SpawnPlayerEntity();
-            }
-            if (CalculatePowerLevel()<PlayerController.instance.entitySpawnPositions.Count
-                && CalculatePowerLevel()<PlayerController.instance.totalPowerLevel)
-            {
-                Debug.Log("despawn player entity");
-                DespawnPlayerEntity();
-            }
-            PlayerController.instance.totalPowerLevel = CalculatePowerLevel();
-            PlayerController.instance.UpdatePowerLevel();
+            trigger = true;
         }
     }
     public int CalculatePowerLevel()
@@ -66,32 +48,34 @@ public class MultiplyPlate : MonoBehaviour
         }
         return 0; // => bug if got this
     }
-    public void SpawnPlayerEntity() //small bug not spawning all the entity
+    public void SpawnPlayerEntity(int calculatedPowerLevel) //small bug not spawning all the entity  | fixed
     {
-        int powerLevel = PlayerController.instance.totalPowerLevel;
-        for (int i=0; i<CalculatePowerLevel()-powerLevel; i++) // check this condition again
+        int currentPowerLevel = PlayerController.instance.totalPowerLevel;
+        calculatedPowerLevel = CalculatePowerLevel();
+        int activePlayerEntity = ObjectPooler.instance.GetActivePooledObject("PlayerEntity");
+
+        for (int i=0; i<calculatedPowerLevel-currentPowerLevel; i++) // check this condition again | fixed
         {
             GameObject playerEntity = ObjectPooler.instance.GetPooledObject("PlayerEntity");
-            Debug.Log("SpawnPlayerEntity");
-            Debug.Log(playerEntity);
-            Debug.Log(ObjectPooler.instance.GetActivePooledObject("PlayerEntity"));
-            if (playerEntity!=null)
+            Transform entitySpawnPos = PlayerController.instance.GetEntitySpawnPosition();
+            if (playerEntity!=null && entitySpawnPos!=null)
             {
                 Vector3 pos = playerEntity.transform.localPosition;
-                playerEntity.transform.parent = PlayerController.instance.GetEntitySpawnPosition();
+                playerEntity.transform.parent = entitySpawnPos;
                 playerEntity.transform.localPosition = pos; // keep local pos
+                playerEntity.GetComponent<PlayerEntity>().ChangeAppearance();
                 playerEntity.SetActive(true);
             }
             else return;
         }
     }
-    public void DespawnPlayerEntity() // despawn need more refine and tinkering
+    public void DespawnPlayerEntity(int calculatedPowerLevel) // despawn need more refine and tinkering
     {
         int spawnedPlayerEntity = ObjectPooler.instance.GetActivePooledObject("PlayerEntity");
         int deSpawnCount = 0;
-            foreach(Transform entityPos in PlayerController.instance.entitySpawnPositions)
+            foreach(Transform entityPos in PlayerController.instance.entitySpawnPositions.AsEnumerable().Reverse())
                 if (entityPos.childCount>0 
-                    && deSpawnCount != (spawnedPlayerEntity-CalculatePowerLevel()))
+                    && deSpawnCount != (spawnedPlayerEntity-calculatedPowerLevel))
                 { 
                     Transform playerEntity =  entityPos.GetChild(0);
                     Vector3 pos = playerEntity.transform.localPosition;
@@ -102,11 +86,10 @@ public class MultiplyPlate : MonoBehaviour
                    
                 }    
     }
-    
     public void RollMultiplyPlate()
     {
         tm.text="";
-        number = Random.Range(1,8);
+        number = Random.Range(2,6);
         expression = (Expression) Random.Range(0,4);
         switch (expression)
         {
@@ -126,5 +109,58 @@ public class MultiplyPlate : MonoBehaviour
                 Debug.Log("Error in multiply plate");
                 break;
         }
+    }
+    public void Activate()
+    {
+        int calculatedPowerLevel = CalculatePowerLevel();
+        LevelManager.instance.counter++;
+        LevelManager.instance.levelPassed++;
+        if (PlayerController.instance.totalPowerLevel < calculatedPowerLevel)
+        {
+            SpawnPlayerEntity(calculatedPowerLevel);
+        }
+        if (calculatedPowerLevel<PlayerController.instance.entitySpawnPositions.Count
+            && calculatedPowerLevel<PlayerController.instance.totalPowerLevel)
+        {
+            Debug.Log("despawn player entity");
+            DespawnPlayerEntity(calculatedPowerLevel);
+        }
+        CalculatePowerLevelForEntity(calculatedPowerLevel,PlayerController.instance.totalPowerLevel);
+        PlayerController.instance.totalPowerLevel = calculatedPowerLevel;
+        PlayerController.instance.UpdatePowerLevel();
+    }
+    public void CalculatePowerLevelForEntity(int calculatedPowerLevel, int currentPowerLevel)
+    {
+        // increasse
+        if (calculatedPowerLevel > currentPowerLevel)
+        {
+            if (calculatedPowerLevel - currentPowerLevel < ObjectPooler.instance.GetActivePooledObject("PlayerEntity"))
+            {
+                int [] plArr = PartitionPowerLevel(calculatedPowerLevel,ObjectPooler.instance.GetActivePooledObject("PlayerEntity")); 
+                int index = 0;
+                foreach(Transform entity in PlayerController.instance.entitySpawnPositions.Where( e => e.childCount>0)) // get position with player entity
+                {
+                    PlayerEntity pe = entity.GetChild(0).GetComponent<PlayerEntity>();
+                    pe.powerLevel += plArr[index];
+                    pe.ChangeAppearance();
+                    index++;
+                }
+            }
+        }
+    }
+    // partition power level into n chunks where difference between max and min value is minimum
+    public int[] PartitionPowerLevel(int powerLevel, int n)
+    {
+        int k = powerLevel/n;
+        int ct = powerLevel % n;
+        int i;
+        int []arr = new int[n]; 
+        for (i =1; i<ct;i++)
+        {
+            arr[i] = k+1;
+        }
+        for (;i<n;i++)
+            arr[i]=k;
+        return arr;
     }
 }

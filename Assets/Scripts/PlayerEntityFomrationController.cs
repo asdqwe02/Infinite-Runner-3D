@@ -10,8 +10,7 @@ public class PlayerEntityFomrationController : MonoBehaviour
     public Transform EntitySpawnPositionPrefab;
     public Transform PlayerEntityPrefab;
     Transform [,] formation;
-    void Start()
-    {
+    private void Awake() {
         formation = new Transform[row,column];
         float start_pos;
         if (column%2==0)
@@ -27,7 +26,12 @@ public class PlayerEntityFomrationController : MonoBehaviour
                 formation[i,j].localPosition = pos;
             }
         }
-        Instantiate(PlayerEntityPrefab,formation[0,column/2]);
+        GameObject initialPlayerEnntity = ObjectPooler.instance.GetPooledObject("PlayerEntity");
+        Vector3 initial_entity_pos = initialPlayerEnntity.transform.localPosition;
+        initialPlayerEnntity.transform.parent = formation[0,column/2];
+        initialPlayerEnntity.transform.localPosition = initial_entity_pos;
+        initialPlayerEnntity.SetActive(true);
+        // Instantiate(PlayerEntityPrefab,formation[0,column/2]);
     }
     // Update is called once per frame
     void Update()

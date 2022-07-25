@@ -15,7 +15,7 @@ public class RotateEventArgs : EventArgs
 }
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed;
+    // public float moveSpeed;
     public float sidewaySpeed;
     public float rotationAngle;
     private bool entityRotatedSideway;
@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour
         LevelManager.instance.CheckBoundary(transform);
     }
     private void FixedUpdate() {
-        transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime,Space.World);
+        // transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime,Space.World);
         MoveEntitySideWay();
        
     }
@@ -109,5 +109,9 @@ public class PlayerController : MonoBehaviour
     public void UpdatePowerLevel()
     {
         plText.text=totalPowerLevel.ToString();
+    }
+    public void AssignPowerLevelToEntity()
+    {
+        
     }
 }

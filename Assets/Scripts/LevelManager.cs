@@ -9,9 +9,11 @@ public class LevelManager : MonoBehaviour
     public int counter;
     public int levelPassed;
     public int nextLevelToGenerate;
+    public int lastLevel;
     public static LevelManager instance;
     public float boundaryValue;
     // Start is called before the first frame update
+    public float speed;
     void Awake()
     {
         if (instance == null)
@@ -24,6 +26,7 @@ public class LevelManager : MonoBehaviour
         boundaryValue = level[0].GetComponent<Renderer>().bounds.size.x/2;
         counter = 0;
         nextLevelToGenerate = 0;
+        lastLevel = level.Count-1;
     }
     // Update is called once per frame
     void Update()
@@ -31,14 +34,22 @@ public class LevelManager : MonoBehaviour
         if (counter>=2)
         {
             counter = 1;
-            level[nextLevelToGenerate].position = new Vector3(0,0,offsetZ*(levelPassed+2));
-            foreach (MultiplyPlate mp in   level[nextLevelToGenerate].GetComponentsInChildren<MultiplyPlate>())
+            // level[nextLevelToGenerate].position = new Vector3(0,0,offsetZ*(levelPassed+2));
+            level[nextLevelToGenerate].position = new Vector3(0,0,offsetZ+level[lastLevel].position.z);
+            foreach (MultiplyPlate mp in level[nextLevelToGenerate].GetComponentsInChildren<MultiplyPlate>())
             {
                 mp.RollMultiplyPlate();
             }
+            lastLevel = nextLevelToGenerate;
             nextLevelToGenerate++;
             if (nextLevelToGenerate>level.Count-1)
                 nextLevelToGenerate=0;
+        }
+    }
+    private void FixedUpdate() {
+        foreach(Transform ground in level)
+        {
+            ground.Translate(Vector3.back*speed*Time.deltaTime,Space.World);
         }
     }
     public void CheckBoundary(Transform tObject)
