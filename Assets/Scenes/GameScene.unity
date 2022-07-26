@@ -578,7 +578,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 458068803}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 6, z: 0}
+  m_LocalPosition: {x: 0.5, y: 7.31, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1165690817}
@@ -1320,7 +1320,7 @@ MonoBehaviour:
   - {fileID: 0}
   itemsToPool:
   - objectToPool: {fileID: 3054690033677602571, guid: 03e4e99348914464ea41a86c707e695b, type: 3}
-    amountToPool: 16
+    amountToPool: 18
     shouldExpand: 0
 --- !u!4 &906942784
 Transform:
@@ -1983,6 +1983,7 @@ MonoBehaviour:
   formation: {fileID: 2070863343}
   entitySpawnPositions: []
   totalPowerLevel: 1
+  maxUnit: 0
   _turnState: 0
 --- !u!65 &1165690819
 BoxCollider:
@@ -2186,6 +2187,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   powerLevel: 0
+  tiers: []
 --- !u!95 &1272962927
 Animator:
   serializedVersion: 3
@@ -3170,7 +3172,7 @@ MonoBehaviour:
   offsetX: 2.7
   offsetZ: 1.8
   EntitySpawnPositionPrefab: {fileID: 3226452545564875044, guid: 5b3213b8e53d1f1448b9647f5903ec95, type: 3}
-  PlayerEntityPrefab: {fileID: 2391306717388854705, guid: 03e4e99348914464ea41a86c707e695b, type: 3}
+  spawnDebuggingBalls: 0
 --- !u!1 &2080006148
 GameObject:
   m_ObjectHideFlags: 0

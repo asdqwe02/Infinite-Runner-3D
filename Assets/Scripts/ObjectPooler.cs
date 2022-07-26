@@ -37,9 +37,6 @@ public class ObjectPooler : MonoBehaviour
             }
         }
     }
-    private void Start() {
-     
-    }
     public GameObject GetPooledObject(string tag) {
         foreach(GameObject pObject in pooledObjects)
         {
@@ -66,7 +63,7 @@ public class ObjectPooler : MonoBehaviour
         }
         return null;
     }
-    public int GetActivePooledObject(string tag)
+    public int ActivePooledObjectCount(string tag)
     {
         int c=0;
         for (int i=0; i<pooledObjects.Count;i++)
@@ -75,5 +72,15 @@ public class ObjectPooler : MonoBehaviour
                 c++;
         }
         return c;
+    }
+    public List<GameObject> GetActivePoolObjects(string tag)
+    {
+        List<GameObject> activeObjectts = new List<GameObject>();
+        for (int i = 0; i < pooledObjects.Count; i++)
+        {
+            if (pooledObjects[i].activeInHierarchy && pooledObjects[i].tag == tag)
+                activeObjectts.Add(pooledObjects[i]);
+        }
+        return activeObjectts; // if null => error
     }
 }

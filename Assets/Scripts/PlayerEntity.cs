@@ -13,7 +13,7 @@ public class PlayerEntity : Entity
         rb = GetComponent<Rigidbody>();
         PlayerController.instance.RotateEntity+=Rotate;
         _default_pos = transform.localPosition;
-        _renderer = GetComponentInChildren<SkinnedMeshRenderer>();
+        // _renderer = GetComponentInChildren<SkinnedMeshRenderer>();
     }
     
     // Update is called once per frame
@@ -43,16 +43,21 @@ public class PlayerEntity : Entity
     public void ChangeAppearance()
     {
         Color32 c = new Color32(151,156,156,255);
-        if ( 5<=powerLevel && powerLevel<25)
+        if (tiers[1].minPower<=powerLevel && powerLevel<tiers[1].maxPower)
             c = new Color32(0,173,255,255);
-        if ( 25<=powerLevel && powerLevel<50)
-            c = new Color32(231, 227, 45,255);
-        if ( 50<=powerLevel && powerLevel<100)
-            c= new Color32(171, 45, 231,255);
-        if ( powerLevel>=100)
-            c = new Color(241, 49, 44,255);
+        if (tiers[2].minPower<=powerLevel && powerLevel<tiers[2].maxPower)
+            c = new Color32(231,227,45,255);
+        if (tiers[3].minPower<=powerLevel && powerLevel<tiers[3].maxPower)
+            c= new Color32(171,45,231,255);
+        if (powerLevel>=tiers[4].minPower)
+            c = new Color32(241,49,44,255);
             
         if (_renderer.material.color!=c)
             _renderer.material.color = c;
     }
+    public object Clone()
+    {
+        return this.MemberwiseClone();
+    }
+ 
 }

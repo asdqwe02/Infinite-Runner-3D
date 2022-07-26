@@ -24,8 +24,9 @@ public class PlayerController : MonoBehaviour
     private Vector3 _sidewayDirection;
     public Transform entityPrefab;
     public Transform formation;
-    public List<Transform> entitySpawnPositions;
+    public List<EntitySpawnPosition> entitySpawnPositions;
     public int totalPowerLevel;
+    public int maxUnit;
     private TextMesh plText;
     public enum TurningState
     {
@@ -46,10 +47,12 @@ public class PlayerController : MonoBehaviour
         entityRotatedSideway = false;
     }
     private void Start() {
+        entitySpawnPositions = new List<EntitySpawnPosition>();
         plText = GetComponentInChildren<TextMesh>();
         UpdatePowerLevel();
-        foreach (Transform pos in formation)
+        foreach (var pos in formation.GetComponent<PlayerEntityFomrationSetup>().formation)
             entitySpawnPositions.Add(pos);
+        maxUnit = GetComponentInChildren<PlayerEntityFomrationSetup>().FormationUnitCount();
     }
     private void Update() {
         ProcessInput();
@@ -99,10 +102,10 @@ public class PlayerController : MonoBehaviour
         // Debug.Log("entity turning event called");
         RotateEntity?.Invoke(this,e);
     }
-    public Transform GetEntitySpawnPosition()
+    public EntitySpawnPosition GetEntitySpawnPosition()
     {
-        foreach(Transform pos in entitySpawnPositions)
-            if (pos.childCount<1)
+        foreach(var pos in entitySpawnPositions)
+            if (pos.entity==null)
                 return pos;
         return null;
     }
@@ -110,8 +113,20 @@ public class PlayerController : MonoBehaviour
     {
         plText.text=totalPowerLevel.ToString();
     }
-    public void AssignPowerLevelToEntity()
+    public void RemoveEntityFromFormation(Transform entity)
     {
-        
+        foreach (var e in entitySpawnPositions)
+        {
+            if (e.entity == entity)
+            {
+                Vector3 pos = entity.transform.localPosition;
+                pos.x = 0; pos.y =0;
+                e.entity.transform.parent = ObjectPooler.instance.transform;
+                e.entity.transform.localPosition = pos;
+                e.entity.GetComponent<PlayerEntity>().powerLevel=1;
+                e.entity.gameObject.SetActive(false);
+                e.entity = null;
+            }
+        }
     }
 }

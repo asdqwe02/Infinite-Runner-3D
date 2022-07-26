@@ -1165,7 +1165,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335bf25ed7b00eb49a99a5c23f0e706c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  powerLevel: 0
+  powerLevel: 1
+  tiers:
+  - minPower: 0
+    maxPower: 4
+  - minPower: 5
+    maxPower: 24
+  - minPower: 25
+    maxPower: 49
+  - minPower: 50
+    maxPower: 99
+  - minPower: 100
+    maxPower: 0
   _offsetZ: 0
   catchUpSpeed: 5
   _renderer: {fileID: 8533133832117249657}

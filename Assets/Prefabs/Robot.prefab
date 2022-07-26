@@ -299,7 +299,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335bf25ed7b00eb49a99a5c23f0e706c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  powerLevel: 0
+  powerLevel: 1
   _offsetZ: 0
   catchUpSpeed: 20
   _renderer: {fileID: 1317432224025551300}
