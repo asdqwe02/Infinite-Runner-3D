@@ -14,13 +14,18 @@ public class Entity : MonoBehaviour
     public Rigidbody rb { get => _rb; set => _rb = value; } // kinda useless
     public int powerLevel;
     public List<Tier> tiers;
-    public int GetTier() // this is hardcoded and look stupid as fuck
+    public int GetTier() // this doesn't even work it's stupid as fuck
     {
         for (int i=0 ; i<tiers.Count-1;i++)
         {
-            if (tiers[i].minPower<=powerLevel && powerLevel<tiers[i].maxPower)
+            if (  powerLevel >= tiers[i].minPower  && powerLevel<=tiers[i].maxPower)
                 return i;
         }
-        return tiers.Count-1;
+        return tiers.Count-1; // max tier
+    }
+    public virtual void Kill()
+    {
+        powerLevel = 1;
+        ObjectPooler.instance.DeactivatePooledObject(gameObject);
     }
 }

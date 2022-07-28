@@ -300,6 +300,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   powerLevel: 1
+  tiers:
+  - minPower: 0
+    maxPower: 4
+  - minPower: 5
+    maxPower: 24
+  - minPower: 25
+    maxPower: 49
+  - minPower: 50
+    maxPower: 99
+  - minPower: 100
+    maxPower: 0
   _offsetZ: 0
   catchUpSpeed: 20
   _renderer: {fileID: 1317432224025551300}

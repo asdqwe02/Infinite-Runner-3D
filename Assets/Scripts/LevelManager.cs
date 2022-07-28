@@ -5,7 +5,7 @@ using UnityEngine;
 public class LevelManager : MonoBehaviour
 {
     public  List<Transform> level;
-    public float offsetZ = 100f;
+    private float _offsetZ;
     public int counter;
     public int levelPassed;
     public int nextLevelToGenerate;
@@ -25,6 +25,7 @@ public class LevelManager : MonoBehaviour
         }
         boundaryValue = level[0].GetComponent<Renderer>().bounds.size.x/2;
         counter = 0;
+        _offsetZ = level[0].GetComponent<Renderer>().bounds.size.z;
         nextLevelToGenerate = 0;
         lastLevel = level.Count-1;
     }
@@ -35,7 +36,7 @@ public class LevelManager : MonoBehaviour
         {
             counter = 1;
             // level[nextLevelToGenerate].position = new Vector3(0,0,offsetZ*(levelPassed+2));
-            level[nextLevelToGenerate].position = new Vector3(0,0,offsetZ+level[lastLevel].position.z);
+            level[nextLevelToGenerate].position = new Vector3(0,0,_offsetZ+level[lastLevel].position.z);
             foreach (MultiplyPlate mp in level[nextLevelToGenerate].GetComponentsInChildren<MultiplyPlate>())
             {
                 mp.RollMultiplyPlate();

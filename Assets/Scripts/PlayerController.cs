@@ -5,8 +5,8 @@ using System;
 
 public class RotateEventArgs : EventArgs
 {
-    public float angle {get; set;}
-    public RotateEventArgs(){}
+    public float angle { get; set; }
+    public RotateEventArgs() { }
     public RotateEventArgs(float angle)
     {
         this.angle = angle;
@@ -34,19 +34,22 @@ public class PlayerController : MonoBehaviour
         left,
         right,
     }
-    [SerializeField]private TurningState _turnState; // might become useless
-    
-    private void Awake() {
+    [SerializeField] private TurningState _turnState; // might become useless
+
+    private void Awake()
+    {
         if (instance == null)
             instance = this;
-        else {
+        else
+        {
             Destroy(gameObject);
             return;
         }
         _turnState = TurningState.forward;
         entityRotatedSideway = false;
     }
-    private void Start() {
+    private void Start()
+    {
         entitySpawnPositions = new List<EntitySpawnPosition>();
         plText = GetComponentInChildren<TextMesh>();
         UpdatePowerLevel();
@@ -54,30 +57,32 @@ public class PlayerController : MonoBehaviour
             entitySpawnPositions.Add(pos);
         maxUnit = GetComponentInChildren<PlayerEntityFomrationSetup>().FormationUnitCount();
     }
-    private void Update() {
+    private void Update()
+    {
         ProcessInput();
         LevelManager.instance.CheckBoundary(transform);
     }
-    private void FixedUpdate() {
+    private void FixedUpdate()
+    {
         // transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime,Space.World);
         MoveEntitySideWay();
-       
+
     }
     private void ProcessInput()
-    { 
+    {
         // BAD
-        if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && _turnState!=TurningState.right) 
+        if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && _turnState != TurningState.right)
         {
             _turnState = TurningState.left;
             _sidewayDirection = Vector3.left;
         }
-        else if ((Input.GetKey(KeyCode.D)|| Input.GetKey(KeyCode.RightArrow))  && _turnState!=TurningState.left)
+        else if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && _turnState != TurningState.left)
         {
             _turnState = TurningState.right;
             _sidewayDirection = Vector3.right;
 
         }
-        else if (_turnState!=TurningState.forward) //reset rotation
+        else if (_turnState != TurningState.forward) //reset rotation
         {
             entityRotatedSideway = false;
             _turnState = TurningState.forward;
@@ -88,45 +93,67 @@ public class PlayerController : MonoBehaviour
     }
     public void MoveEntitySideWay()
     {
-        transform.Translate(_sidewayDirection * sidewaySpeed * Time.deltaTime,Space.World);
-     
-      
-        if(_turnState!=TurningState.forward && entityRotatedSideway == false)
+        transform.Translate(_sidewayDirection * sidewaySpeed * Time.deltaTime, Space.World);
+
+
+        if (_turnState != TurningState.forward && entityRotatedSideway == false)
         {
-            OnRotateEntity(new RotateEventArgs(_sidewayDirection.x*rotationAngle));
+            OnRotateEntity(new RotateEventArgs(_sidewayDirection.x * rotationAngle));
             entityRotatedSideway = true;
         }
     }
     protected virtual void OnRotateEntity(RotateEventArgs e)
     {
         // Debug.Log("entity turning event called");
-        RotateEntity?.Invoke(this,e);
+        RotateEntity?.Invoke(this, e);
     }
     public EntitySpawnPosition GetEntitySpawnPosition()
     {
-        foreach(var pos in entitySpawnPositions)
-            if (pos.entity==null)
+        foreach (var pos in entitySpawnPositions)
+            if (pos.entity == null)
+                return pos;
+        return null;
+    }
+    public EntitySpawnPosition GetEntitySpawnPosition(Transform entity)
+    {
+        foreach (var pos in entitySpawnPositions)
+            if (pos.entity == entity)
                 return pos;
         return null;
     }
     public void UpdatePowerLevel()
     {
-        plText.text=totalPowerLevel.ToString();
+        plText.text = totalPowerLevel.ToString();
     }
     public void RemoveEntityFromFormation(Transform entity)
     {
-        foreach (var e in entitySpawnPositions)
+        EntitySpawnPosition esp = GetEntitySpawnPosition(entity);
+        if (esp != null)
         {
-            if (e.entity == entity)
+            esp.entity = null;
+        }
+    }
+    public void ResetAllEntityPowerLevel()
+    {
+        foreach (var pos in entitySpawnPositions)
+        {
+            if (pos.entity != null)
             {
-                Vector3 pos = entity.transform.localPosition;
-                pos.x = 0; pos.y =0;
-                e.entity.transform.parent = ObjectPooler.instance.transform;
-                e.entity.transform.localPosition = pos;
-                e.entity.GetComponent<PlayerEntity>().powerLevel=1;
-                e.entity.gameObject.SetActive(false);
-                e.entity = null;
+                PlayerEntity entity = pos.entity.GetComponent<PlayerEntity>();
+                entity.powerLevel = 1;
+                entity.ChangeAppearance();
             }
         }
     }
+    public void RemoveAllEntity()
+    {
+        ResetAllEntityPowerLevel();
+        foreach (var pos in entitySpawnPositions)
+            if (pos.entity != null)
+            {
+                pos.entity = null;
+            }
+        ObjectPooler.instance.RemoveAllObjectWithTag("PlayerEntity");
+    }
+
 }

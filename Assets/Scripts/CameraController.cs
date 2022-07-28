@@ -5,17 +5,17 @@ using UnityEngine;
 // basic camera script
 public class CameraController : MonoBehaviour 
 {
-    Vector3 offset;
-    Transform target;
+    Vector3 _offset;
+    Transform _target;
     // Start
     private void Start() {
-        target = PlayerController.instance.transform;
-        offset = transform.position - target.position;
+        _target = PlayerController.instance.transform;
+        _offset = transform.position - _target.position;
     }
     // Update is called once per frame
     void Update()
     {
-        transform.position = offset+target.position;
+        transform.position = _offset+_target.position;
         LevelManager.instance.CheckBoundary(transform);
 
     }

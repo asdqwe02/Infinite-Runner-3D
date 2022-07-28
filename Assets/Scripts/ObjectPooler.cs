@@ -83,4 +83,32 @@ public class ObjectPooler : MonoBehaviour
         }
         return activeObjectts; // if null => error
     }
+    public bool DeactivatePooledObject(GameObject obj) // is this necessary ? doesn't seem like it
+    {
+        if (pooledObjects.Contains(obj))
+        {
+            Vector3 pos = obj.transform.localPosition;
+            pos.x = 0; pos.z =0; // mostly keep the y pos maybe should make another function for this
+            obj.transform.parent = transform;
+            obj.transform.localPosition=pos;
+            obj.SetActive(false);
+            return true; // deactivate successful
+        }
+        return false; // deactivate not successful either not exist in list or some error
+    }
+    
+    public void RemoveAllObjectWithTag(string tag)
+    {   
+        foreach (var obj in pooledObjects)
+        {
+            if (obj.tag == tag)
+            {
+                Vector3 pos = obj.transform.localPosition;
+                pos.x = 0; pos.z =0; // mostly keep the y pos maybe should make another function for this
+                obj.transform.parent = transform;
+                obj.transform.localPosition=pos;
+                obj.SetActive(false);
+            }
+        }
+    }
 }
