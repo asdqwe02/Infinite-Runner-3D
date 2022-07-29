@@ -20,7 +20,8 @@ public static class Utility
         }
         return newList;
     }
-    public static List<T> ConvertGameObjsToSCript<T>(List<GameObject> list)
+
+    public static List<T> ConvertGameObjsToSCript<T>(List<GameObject> list) // convert list game object to list of the desire script
     {
         List<T> tmpList = new List<T>();
         foreach (var obj in list)
@@ -43,6 +44,17 @@ public static class Utility
         for (; i < n; i++)
             arr[i] = k;
         return arr;
+    }
+
+    public static List<EntitySpawnPosition> GetSpawnPositionWithEntity(List<EntitySpawnPosition> list)
+    {
+        List<EntitySpawnPosition> tmpList = new List<EntitySpawnPosition>();
+        foreach (var pos in list)
+        {
+            if (pos.entity !=null)
+                tmpList.Add(pos);
+        }
+        return tmpList;
     }
 }
 

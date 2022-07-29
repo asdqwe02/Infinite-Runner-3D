@@ -29,6 +29,17 @@ public class LevelManager : MonoBehaviour
         nextLevelToGenerate = 0;
         lastLevel = level.Count-1;
     }
+    private void Start() {
+        for (int i =0; i<level.Count-1; i++) // ... WTF
+        {
+            level[i].GetComponentInChildren<PlateController>().nextEnemySpannwer = level[i+1].GetComponentInChildren<EnemySpawnerController>();
+            level[i+1].GetComponentInChildren<PlateController>().previousEnemySpannwer = level[i].GetComponentInChildren<EnemySpawnerController>();
+        }
+        level[level.Count-1].GetComponentInChildren<PlateController>().nextEnemySpannwer = level[0].GetComponentInChildren<EnemySpawnerController>();
+        level[0].GetComponentInChildren<PlateController>().previousEnemySpannwer = level[level.Count-1].GetComponentInChildren<EnemySpawnerController>();
+
+        level[level.Count-1].GetComponentInChildren<PlateController>().nextEnemySpannwer.SpawnEnemyEntity();
+    }
     // Update is called once per frame
     void Update()
     {

@@ -5,7 +5,12 @@ using UnityEngine;
 public class PlateController : MonoBehaviour
 {
     public List<MultiplyPlate> multiplyPlate;
+    public EnemySpawnerController nextEnemySpannwer,previousEnemySpannwer,currentEnenmySpawner;
     private void Awake() {
+        currentEnenmySpawner = transform.root.GetComponentInChildren<EnemySpawnerController>();
+    }
+    private void Start() 
+    {
         foreach(MultiplyPlate obj in transform.parent.GetComponentsInChildren<MultiplyPlate>())
         {
             multiplyPlate.Add(obj);
@@ -19,6 +24,9 @@ public class PlateController : MonoBehaviour
                 {
                     plate.Activate();
                     DeTriggerMultiplyPlate();
+                    previousEnemySpannwer.DespawnEnemyEntity();
+                    currentEnenmySpawner.SetTarget();
+                    nextEnemySpannwer.SpawnEnemyEntity();
                     return;
                 }
         }

@@ -47,11 +47,11 @@ public class PlayerController : MonoBehaviour
         }
         _turnState = TurningState.forward;
         entityRotatedSideway = false;
+        entitySpawnPositions = new List<EntitySpawnPosition>();
+        plText = GetComponentInChildren<TextMesh>();
     }
     private void Start()
     {
-        entitySpawnPositions = new List<EntitySpawnPosition>();
-        plText = GetComponentInChildren<TextMesh>();
         UpdatePowerLevel();
         foreach (var pos in formation.GetComponent<PlayerEntityFomrationSetup>().formation)
             entitySpawnPositions.Add(pos);

@@ -27,6 +27,10 @@ public class PlayerEntityFomrationSetup : MonoBehaviour
     private void Awake() {
         _debugFormation = new Transform[row,column];
         formation = new EntitySpawnPosition[row,column];
+        // Instantiate(PlayerEntityPrefab,formation[0,column/2]);
+    }
+    private void Start() {
+     
         float start_pos;
         if (column%2==0)
             start_pos = -(column/2)*offsetX + offsetX/2;
@@ -55,7 +59,6 @@ public class PlayerEntityFomrationSetup : MonoBehaviour
         initialPlayerEnntity.transform.parent = transform;
         initialPlayerEnntity.transform.localPosition = initial_entity_pos;
         initialPlayerEnntity.SetActive(true);
-        // Instantiate(PlayerEntityPrefab,formation[0,column/2]);
     }
     public int FormationUnitCount()
     {

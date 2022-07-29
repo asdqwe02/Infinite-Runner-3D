@@ -207,7 +207,7 @@ public class MultiplyPlate : MonoBehaviour
                         Utility.ConvertGameObjsToSCript<PlayerEntity>(PlayerEntity),
                         Random.Range(3, 6)); //... wtf
                 bool grouped = GroupPlayerEntity(groupList);
-                Debug.Log("group player entity: " + grouped); // debug
+                // Debug.Log("group player entity: " + grouped); // debug
             }
         }
 
@@ -242,7 +242,7 @@ public class MultiplyPlate : MonoBehaviour
                         {
                             while (pld > 0)
                             {
-                                Debug.Log("loop offset > active");
+                                // Debug.Log("loop offset > active");
                                 PlayerEntity rdEntity = PlayerEntity[Random.Range(0, PlayerEntity.Count)].GetComponent<PlayerEntity>();
                                 if (killList.Contains(rdEntity)) 
                                     continue;
@@ -279,7 +279,7 @@ public class MultiplyPlate : MonoBehaviour
                 */
                 while (pld > 0) 
                 {
-                    Debug.Log("loop offset < active");
+                    // Debug.Log("loop offset < active");
                     PlayerEntity rdEntity = PlayerEntity[Random.Range(0, PlayerEntity.Count)].GetComponent<PlayerEntity>();
                     if (killList.Contains(rdEntity))
                         continue;
@@ -302,7 +302,7 @@ public class MultiplyPlate : MonoBehaviour
         }
 
         // debugging
-        Debug.Log("new spawn: " + newSpawn + "\noffset: " + offset + "\n activate player entity: " + activePlayerEntity);
+        // Debug.Log("new spawn: " + newSpawn + "\noffset: " + offset + "\n activate player entity: " + activePlayerEntity);
     }
     // partition power level into n chunks where difference between max and min value is minimum
 
@@ -322,7 +322,7 @@ public class MultiplyPlate : MonoBehaviour
         rdEntity.powerLevel = sumPower;
         if (rdEntity.GetTier() > maxTier)
         {
-            Debug.Log("sum power of 3 random entity: " + sumPower);
+            // Debug.Log("sum power of 3 random entity: " + sumPower);
             rdEntity.ChangeAppearance();
             entities.Remove(rdEntity);
             foreach (var entity in entities)
