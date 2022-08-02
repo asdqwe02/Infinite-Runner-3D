@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1360008235}
   m_Layer: 8
   m_Name: EnemySpawner
-  m_TagString: EnemyEntity
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,7 +98,8 @@ MonoBehaviour:
   offsetX: 0
   multiplyPlate: []
   maxPowerLevel: 0
-  render: 1
+  render: 0
+  enemyEntityList: []
 --- !u!1 &6841915012064985747
 GameObject:
   m_ObjectHideFlags: 0
@@ -836,7 +837,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   multiplyPlate: []
-  enemySpannwer: {fileID: 0}
+  nextEnemySpannwer: {fileID: 0}
+  previousEnemySpannwer: {fileID: 0}
+  currentEnenmySpawner: {fileID: 0}
 --- !u!1 &6841915013530465414
 GameObject:
   m_ObjectHideFlags: 0

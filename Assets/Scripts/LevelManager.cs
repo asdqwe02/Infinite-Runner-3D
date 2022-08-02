@@ -7,7 +7,7 @@ public class LevelManager : MonoBehaviour
     public  List<Transform> level;
     private float _offsetZ;
     public int counter;
-    public int levelPassed;
+    public int levelPassed; // use this to calculate point
     public int nextLevelToGenerate;
     public int lastLevel;
     public static LevelManager instance;
@@ -78,4 +78,8 @@ public class LevelManager : MonoBehaviour
             tObject.position = current_pos;
         }
     }   
+    public Transform GetCurrentLevel()
+    {
+        return level[nextLevelToGenerate];
+    }
 }

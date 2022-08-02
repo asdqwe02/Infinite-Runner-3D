@@ -56,5 +56,34 @@ public static class Utility
         }
         return tmpList;
     }
+
+    public static GameObject GetChildWithName(GameObject obj, string name) 
+    {
+        Transform trans = obj.transform;
+        Transform childTrans = trans. Find(name);
+        if (childTrans != null) 
+        {
+            return childTrans.gameObject;
+        } else 
+        {
+            return null;
+        }
+    }
+    public static IEnumerator PlayerSkillCD(float time, System.Action CooldownAction)
+    {
+        yield return new WaitForSeconds(time);
+        CooldownAction();
+    }
+
+    public static List<Transform> GetChildWithTag(Transform parent, string tag)
+    {
+        List<Transform> tempList = new List<Transform>();
+        foreach(Transform child in parent)
+        {   
+            if (child.tag == tag)
+                tempList.Add(child);
+        }
+        return tempList;
+    }
 }
 

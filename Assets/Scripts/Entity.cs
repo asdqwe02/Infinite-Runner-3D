@@ -46,5 +46,25 @@ public class Entity : MonoBehaviour
             transform.localScale = OGSize + new Vector3(sizeIncrease,sizeIncrease,sizeIncrease);
         }
     }
+    public void ParticleExplode()
+    {
+        var particle = ObjectPooler.instance.GetPooledObject("ParticleBodyExplode");
+        if (particle!=null)
+        {
+            particle.transform.parent = null;
+            Vector3 pos = transform.position;
+            float offsetY = Renderer.bounds.size.y/2;
+            pos.y = offsetY;
+            particle.GetComponentInChildren<ParticleSystemRenderer>().material.color = tiers[GetTier()].color;
+            particle.transform.position = pos;
+            particle.SetActive(true);
+            particle.GetComponentInChildren<ParticleSystem>().Play();
+        }
+       
+    }
+    public void TakeDamage(int Damage)
+    {
+        powerLevel -= Damage;
+    }
     
 }

@@ -83,6 +83,9 @@ MonoBehaviour:
   entitySpawnPositions: []
   totalPowerLevel: 1
   maxUnit: 0
+  laserSkillTime: 3
+  laserSkillCDTime: 4
+  laserSkillCD: 0
   _turnState: 0
 --- !u!1 &1541288487625979205
 GameObject:

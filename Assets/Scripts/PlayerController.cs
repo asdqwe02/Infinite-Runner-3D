@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-
+using static Utility;
 public class RotateEventArgs : EventArgs
 {
     public float angle { get; set; }
@@ -15,7 +15,6 @@ public class RotateEventArgs : EventArgs
 }
 public class PlayerController : MonoBehaviour
 {
-    // public float moveSpeed;
     public float sidewaySpeed;
     public float rotationAngle;
     private bool entityRotatedSideway;
@@ -28,6 +27,9 @@ public class PlayerController : MonoBehaviour
     public int totalPowerLevel;
     public int maxUnit;
     private TextMesh plText;
+    List<PlayerEntity> flyingEntity;
+    public float laserSkillTime,laserSkillCDTime;
+    public bool laserSkillCD;
     public enum TurningState
     {
         forward,
@@ -48,6 +50,7 @@ public class PlayerController : MonoBehaviour
         _turnState = TurningState.forward;
         entityRotatedSideway = false;
         entitySpawnPositions = new List<EntitySpawnPosition>();
+        flyingEntity = new List<PlayerEntity>();
         plText = GetComponentInChildren<TextMesh>();
     }
     private void Start()
@@ -90,6 +93,11 @@ public class PlayerController : MonoBehaviour
             OnRotateEntity(new RotateEventArgs(0f));
 
         }
+
+        if (Input.GetKeyDown(KeyCode.Space) && flyingEntity.Count==0 && !laserSkillCD)
+        {
+            StartCoroutine(LaserSkill(3));
+        }
     }
     public void MoveEntitySideWay()
     {
@@ -114,7 +122,7 @@ public class PlayerController : MonoBehaviour
                 return pos;
         return null;
     }
-    public EntitySpawnPosition GetEntitySpawnPosition(Transform entity)
+    public EntitySpawnPosition GetEntityPosition(Transform entity)
     {
         foreach (var pos in entitySpawnPositions)
             if (pos.entity == entity)
@@ -127,7 +135,7 @@ public class PlayerController : MonoBehaviour
     }
     public void RemoveEntityFromFormation(Transform entity)
     {
-        EntitySpawnPosition esp = GetEntitySpawnPosition(entity);
+        EntitySpawnPosition esp = GetEntityPosition(entity);
         if (esp != null)
         {
             esp.entity = null;
@@ -154,6 +162,43 @@ public class PlayerController : MonoBehaviour
                 pos.entity = null;
             }
         ObjectPooler.instance.RemoveAllObjectWithTag("PlayerEntity");
+    }
+
+    public IEnumerator LaserSkill(int amount) // basic function to test thing out
+    {
+        // abomination code
+        List <EntitySpawnPosition> entityPos = GetRandomItemsFromList<EntitySpawnPosition>(GetSpawnPositionWithEntity(entitySpawnPositions),amount); 
+        List<LaserController> entityLaser = new List<LaserController>();
+        foreach (var pos in entityPos)
+        {
+            PlayerEntity entity = pos.entity.GetComponent<PlayerEntity>();
+            LaserController laser = ObjectPooler.instance.GetPooledObject("Laser").GetComponent<LaserController>();
+            entity.FlyUp();
+            if (laser!=null)
+            {
+                laser.SetUp(laserSkillTime, pos.entity.GetComponent<PlayerEntity>().laserPoint,entity.powerLevel);
+                laser.gameObject.SetActive(true);
+                entityLaser.Add(laser);
+            }
+            flyingEntity.Add (pos.entity.GetComponent<PlayerEntity>());
+        }
+        yield return new WaitForSeconds(laserSkillTime);
+
+        // return flying entity to normal running state
+        foreach(var entity in flyingEntity)
+        {
+            entity.BackToGround();
+        }
+        // disable laser
+        foreach (var laser in entityLaser)
+        {
+            laser.transform.parent = ObjectPooler.instance.transform;
+            laser.gameObject.SetActive(false);
+        }
+
+        flyingEntity.Clear(); // clear the list
+        laserSkillCD = true; // start CD
+        StartCoroutine(PlayerSkillCD(laserSkillTime, () => laserSkillCD = false));
     }
 
 }
