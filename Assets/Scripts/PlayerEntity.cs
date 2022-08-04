@@ -13,31 +13,34 @@ public class PlayerEntity : Entity
     public int currentTier; // for debugging only
     public Transform laserTarget;
     public Transform laserPoint;
-    
+
     [Range(3.5f, 5.5f)]
     public float flyUpYPosition;
-    [Range(-65f,-90f)]
+    [Range(-65f, -90f)]
     public float flyUpRotationX;
     public bool flying;
-  
+    [SerializeField] private int _shield;
+    bool enableShield;
+
     // is this even necessary ?
-    protected void Awake() { 
+    protected void Awake()
+    {
         base.Awake();
         animator = GetComponent<Animator>();
-    
+
     }
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         PlayerController.instance.RotateEntity += RotateEntity;
         _default_pos = transform.localPosition;
-        foreach(Transform child in transform)
+        foreach (Transform child in transform)
         {
             laserTarget = child.Find("Target");
-            if (laserTarget!=null)
+            if (laserTarget != null)
                 break;
         }
-           
+
         // _renderer = GetComponentInChildren<SkinnedMeshRenderer>(); // don't use this
     }
 
@@ -66,7 +69,7 @@ public class PlayerEntity : Entity
         Vector3 target_pos = _default_pos - transform.localPosition;
         transform.Translate(target_pos * catchUpSpeed * Time.deltaTime);
     }
-    
+
     public override void Kill()
     {
         powerLevel = 1;
@@ -80,19 +83,59 @@ public class PlayerEntity : Entity
         flyUpYPosition = UnityEngine.Random.Range(3.5f, 5.5f); // arbitrary
         _default_pos.y = flyUpYPosition;
         // transform.Rotate(new Vector3(flyUpRotationX, 0, 0), Space.World); 
-        animator.SetBool("IsFlying",true);
-        animator.SetBool("Running",false);
+        animator.SetBool("IsFlying", true);
+        animator.SetBool("Running", false);
     }
     public void BackToGround()
     {
         flying = false;
         // transform.rotation = Quaternion.identity;
         _default_pos.y = -PlayerController.instance.transform.position.y;
-        animator.SetBool("IsFlying",false);
-        animator.SetBool("Running",true);
+        animator.SetBool("IsFlying", false);
+        animator.SetBool("Running", true);
     }
-    private void OnDisable() {
+    private void OnDisable()
+    {
         BackToGround();
-  
+
+    }
+    public override void ChangeAppearance()
+    {
+        base.ChangeAppearance();
+    }
+    public void SetUpShield()
+    {
+        enableShield = true;
+        _shield = (powerLevel * 25) / 100;
+        Renderer.material.EnableKeyword("_EMISSION");
+        Renderer.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
+        Renderer.material.SetColor("_EmissionColor", Renderer.material.color * 1.5f);
+    }
+    public void DisableShield()
+    {
+        _shield = 0;
+        enableShield = false;
+        Renderer.material.DisableKeyword("_EMISSION");
+        Renderer.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.EmissiveIsBlack;
+    }
+    public override void TakeDamage(int Damage)
+    {
+        int finalDamage = Damage;     
+        int pePL = powerLevel; // save old player powerlevel
+        finalDamage -=_shield;
+
+        powerLevel -= finalDamage;
+        _shield -= Damage;
+        if (powerLevel<=0)
+            PlayerController.instance.totalPowerLevel -= pePL;
+        else 
+        {
+            PlayerController.instance.totalPowerLevel -= finalDamage;
+        }
+        if (_shield <= 0 && enableShield)
+        {
+            // ParticleExplode();
+            DisableShield();
+        }
     }
 }

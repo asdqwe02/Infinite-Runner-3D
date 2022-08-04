@@ -5,7 +5,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    public Transform LoseMessage;
+    public bool gameOver = false;
+    public Transform gameOverScreen;
     private void Awake() {
         if (instance == null)
             instance = this;
@@ -14,18 +15,23 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        gameOver = false;
     }
     private void Update() 
     {
-        if (PlayerController.instance.totalPowerLevel <=0)
+        if (PlayerController.instance.totalPowerLevel <=0 && !gameOver)
         {
-            LoseMessage.gameObject.SetActive(true);
-            PauseGame();
+            gameOver = true;
+            gameOverScreen.gameObject.SetActive(true);
+            StartCoroutine(PauseGame(1f));
         }
 
     }
-    public  void PauseGame ()
+    public IEnumerator PauseGame (float slowDuration)
     {
+        Time.timeScale = 0.5f;
+        Time.fixedDeltaTime = Time.timeScale *Time.deltaTime;
+        yield return new WaitForSeconds(slowDuration);
         Time.timeScale = 0;
     }
 }

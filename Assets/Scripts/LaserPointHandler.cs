@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class LaserPointHandler : MonoBehaviour
 {
-    // Start is called before the first frame update
     public LaserController laser;
 
-    private void OnTriggerStay(Collider other) 
+    private void OnTriggerStay(Collider other) // idk about this
     {
         if (other.tag == "EnemyEntity" && laser != null && !laser.targetList.Contains(other.transform))
         {
@@ -16,7 +15,7 @@ public class LaserPointHandler : MonoBehaviour
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag == "EnemyEntity" && laser != null)
+        if (other.tag == "EnemyEntity" && laser != null && laser.targetList.Contains(other.transform))
         {
             laser.targetList.Remove(other.transform);
         }
@@ -27,8 +26,6 @@ public class LaserPointHandler : MonoBehaviour
         {
             laser.targetList.Clear();
             laser = null;
-
         }
-
     }
 }

@@ -56,6 +56,16 @@ public static class Utility
         }
         return tmpList;
     }
+    public static List<PlayerEntity> GetPlayerEntityInSpawnPosition(List<EntitySpawnPosition> list)
+    {
+        List<PlayerEntity> tmpList = new List<PlayerEntity>();
+        foreach (var pos in list)
+        {
+            if (pos.entity !=null)
+                tmpList.Add(pos.entity.GetComponent<PlayerEntity>());
+        }
+        return tmpList;
+    }
 
     public static GameObject GetChildWithName(GameObject obj, string name) 
     {
@@ -69,7 +79,7 @@ public static class Utility
             return null;
         }
     }
-    public static IEnumerator PlayerSkillCD(float time, System.Action CooldownAction)
+    public static IEnumerator PlayerSkillCD(float time, System.Action CooldownAction) // should be able to be use generallly as a cooldown timer
     {
         yield return new WaitForSeconds(time);
         CooldownAction();

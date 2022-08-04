@@ -104,9 +104,9 @@ public class MultiplyPlate : MonoBehaviour
     public void SplitPlayerEntity(int calculatedPowerLevel, int activePlayerEntity) // despawn need more refine and tinkering
     {
         PlayerController.instance.RemoveAllEntity();
-        for (int i = 0; i < calculatedPowerLevel; i++)       
+        for (int i = 0; i < calculatedPowerLevel; i++)
         {
-            GameObject playerEntity = ObjectPooler.instance.GetPooledObject("PlayerEntity");  
+            GameObject playerEntity = ObjectPooler.instance.GetPooledObject("PlayerEntity");
             EntitySpawnPosition entitySpawnPos = PlayerController.instance.GetEntitySpawnPosition();
             if (playerEntity != null && entitySpawnPos != null)
             {
@@ -121,22 +121,6 @@ public class MultiplyPlate : MonoBehaviour
                 playerEntity.GetComponent<PlayerEntity>().ChangeAppearance();
             }
         }
-
-        // foreach (var entityPos in PlayerController.instance.entitySpawnPositions.AsEnumerable().Reverse())
-        //     if (entityPos.entity != null
-        //         && deSpawnCount != (spawnedPlayerEntity - calculatedPowerLevel))
-        //     {
-        //         Transform playerEntity = entityPos.entity;
-        //         Vector3 pos = playerEntity.transform.localPosition;
-        //         pos.x = 0; pos.z = 0; // shouldn't matter can delete
-        //         playerEntity.parent = ObjectPooler.instance.transform;
-        //         playerEntity.localPosition = pos; // keep local pos
-        //         playerEntity.GetComponent<PlayerEntity>().powerLevel = 1;
-        //         playerEntity.gameObject.SetActive(false);
-        //         entityPos.entity = null;
-        //         deSpawnCount++;
-
-        //     }
     }
 
     public void Activate()
@@ -216,7 +200,7 @@ public class MultiplyPlate : MonoBehaviour
         {
             if (calculatedPowerLevel < PlayerController.instance.maxUnit)
             {
-                SplitPlayerEntity(calculatedPowerLevel,activePlayerEntity);
+                SplitPlayerEntity(calculatedPowerLevel, activePlayerEntity);
                 return;
             }
             if (offset > activePlayerEntity)
@@ -244,7 +228,7 @@ public class MultiplyPlate : MonoBehaviour
                             {
                                 // Debug.Log("loop offset > active");
                                 PlayerEntity rdEntity = PlayerEntity[Random.Range(0, PlayerEntity.Count)].GetComponent<PlayerEntity>();
-                                if (killList.Contains(rdEntity)) 
+                                if (killList.Contains(rdEntity))
                                     continue;
                                 rdEntity.powerLevel -= pld;
                                 rdEntity.ChangeAppearance();// NOTE: move this somewhere else
@@ -266,7 +250,7 @@ public class MultiplyPlate : MonoBehaviour
                         e.Kill();
                 }
             }
-            if (offset < activePlayerEntity && calculatedPowerLevel >=  PlayerController.instance.maxUnit)
+            if (offset < activePlayerEntity && calculatedPowerLevel >= PlayerController.instance.maxUnit)
             {
                 int pld = offset;
                 List<PlayerEntity> killList = new List<PlayerEntity>();
@@ -277,7 +261,7 @@ public class MultiplyPlate : MonoBehaviour
                 * power level - pdl = 0 -> break
                 *
                 */
-                while (pld > 0) 
+                while (pld > 0)
                 {
                     // Debug.Log("loop offset < active");
                     PlayerEntity rdEntity = PlayerEntity[Random.Range(0, PlayerEntity.Count)].GetComponent<PlayerEntity>();
@@ -292,13 +276,13 @@ public class MultiplyPlate : MonoBehaviour
                     }
                     else break;
                 }
-                if (killList.Count>0)
+                if (killList.Count > 0)
                 {
                     foreach (var e in killList)
                         e.Kill();
                 }
             }
-            
+
         }
 
         // debugging

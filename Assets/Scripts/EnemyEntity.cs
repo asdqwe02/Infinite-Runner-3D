@@ -33,17 +33,15 @@ public class EnemyEntity : Entity
         {
             hit = true;
             PlayerEntity pe = other.collider.GetComponent<PlayerEntity>();
-            int pePL = pe.powerLevel;
-            pe.powerLevel -= powerLevel;
+            pe.TakeDamage(powerLevel);
             if (pe.powerLevel <= 0)
             {
-                PlayerController.instance.totalPowerLevel -= pePL;
+               
                 target = null;
                 pe.Kill();
             }
             else
             {
-                PlayerController.instance.totalPowerLevel -= powerLevel;
                 pe.ChangeAppearance();
             }
             PlayerController.instance.UpdatePowerLevel();
@@ -57,11 +55,11 @@ public class EnemyEntity : Entity
         ParticleExplode();
         base.Kill();
     }
-    private void OnDisable()
-    {
-        target = null;
+    private void OnEnable() {
         hit = false;
+        target = null;
         animator.SetBool("Running", false);
+
     }
     public void SetTarget()
     {

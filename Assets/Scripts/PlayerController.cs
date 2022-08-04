@@ -27,9 +27,10 @@ public class PlayerController : MonoBehaviour
     public int totalPowerLevel;
     public int maxUnit;
     private TextMesh plText;
-    List<PlayerEntity> flyingEntity;
-    public float laserSkillTime,laserSkillCDTime;
-    public bool laserSkillCD;
+    public List<PlayerEntity> flyingEntity;
+    public float laserSkillTime, shieldSkillTime, skillCDTime, skillCDTimeTotal;
+    public bool skillCD;
+    public Action skill;
     public enum TurningState
     {
         forward,
@@ -94,9 +95,10 @@ public class PlayerController : MonoBehaviour
 
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && flyingEntity.Count==0 && !laserSkillCD)
+        if (Input.GetKeyDown(KeyCode.Space) && !skillCD)
         {
-            StartCoroutine(LaserSkill(3));
+            skillCD = true;
+            skill();
         }
     }
     public void MoveEntitySideWay()
@@ -166,39 +168,72 @@ public class PlayerController : MonoBehaviour
 
     public IEnumerator LaserSkill(int amount) // basic function to test thing out
     {
-        // abomination code
-        List <EntitySpawnPosition> entityPos = GetRandomItemsFromList<EntitySpawnPosition>(GetSpawnPositionWithEntity(entitySpawnPositions),amount); 
-        List<LaserController> entityLaser = new List<LaserController>();
-        foreach (var pos in entityPos)
+        if (flyingEntity.Count == 0)
         {
-            PlayerEntity entity = pos.entity.GetComponent<PlayerEntity>();
-            LaserController laser = ObjectPooler.instance.GetPooledObject("Laser").GetComponent<LaserController>();
-            entity.FlyUp();
-            if (laser!=null)
+            // abomination code
+            List<EntitySpawnPosition> entityPos = GetRandomItemsFromList<EntitySpawnPosition>(GetSpawnPositionWithEntity(entitySpawnPositions), amount);
+            List<LaserController> entityLaser = new List<LaserController>();
+            foreach (var pos in entityPos)
             {
-                laser.SetUp(laserSkillTime, pos.entity.GetComponent<PlayerEntity>().laserPoint,entity.powerLevel);
-                laser.gameObject.SetActive(true);
-                entityLaser.Add(laser);
+                PlayerEntity entity = pos.entity.GetComponent<PlayerEntity>();
+                LaserController laser = ObjectPooler.instance.GetPooledObject("Laser").GetComponent<LaserController>();
+                entity.FlyUp();
+                if (laser != null)
+                {
+                    laser.SetUp(entity, laserSkillTime, entity.powerLevel);
+                    laser.gameObject.SetActive(true);
+                    entityLaser.Add(laser);
+                }
+                flyingEntity.Add(pos.entity.GetComponent<PlayerEntity>());
             }
-            flyingEntity.Add (pos.entity.GetComponent<PlayerEntity>());
-        }
-        yield return new WaitForSeconds(laserSkillTime);
+            yield return new WaitForSeconds(laserSkillTime);
 
-        // return flying entity to normal running state
-        foreach(var entity in flyingEntity)
-        {
-            entity.BackToGround();
+            // return flying entity to normal running state
+            foreach (var entity in flyingEntity)
+            {
+                entity.BackToGround();
+            }
+            // disable laser
+            foreach (var laser in entityLaser)
+            {
+                laser.transform.parent = ObjectPooler.instance.transform;
+                laser.gameObject.SetActive(false);
+            }
+            flyingEntity.Clear(); // clear the list
+            StartCoroutine(PlayerSkillCD(skillCDTime, () => skillCD = false)); // start cooldown
         }
-        // disable laser
-        foreach (var laser in entityLaser)
+    }
+    public IEnumerator ShieldSkill()
+    {
+        // apply shield effect
+        List<PlayerEntity> peList = GetPlayerEntityInSpawnPosition(entitySpawnPositions);
+        foreach (var entity in peList)
         {
-            laser.transform.parent = ObjectPooler.instance.transform;
-            laser.gameObject.SetActive(false);
+            entity.SetUpShield();
         }
+        yield return new WaitForSeconds(shieldSkillTime);
+        // remove shield effect
+        foreach (var entity in peList)
+        {
+            entity.DisableShield();
+        }
+        StartCoroutine(PlayerSkillCD(skillCDTime, () => skillCD = false)); // start cooldown
 
-        flyingEntity.Clear(); // clear the list
-        laserSkillCD = true; // start CD
-        StartCoroutine(PlayerSkillCD(laserSkillTime, () => laserSkillCD = false));
+    }
+    public void SetUpShieldSkill()
+    {
+        skill = () => {
+            StartCoroutine(ShieldSkill());
+          skillCDTimeTotal =skillCDTime + shieldSkillTime;
+        };
+    }
+    public void SetUpLaserSkill()
+    {
+        skill = () => {
+            StartCoroutine(LaserSkill(3));
+            skillCDTimeTotal = skillCDTime + laserSkillTime;
+        };
+     
     }
 
 }

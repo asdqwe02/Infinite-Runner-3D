@@ -55,14 +55,20 @@ public class Entity : MonoBehaviour
             Vector3 pos = transform.position;
             float offsetY = Renderer.bounds.size.y/2;
             pos.y = offsetY;
-            particle.GetComponentInChildren<ParticleSystemRenderer>().material.color = tiers[GetTier()].color;
+            ParticleSystemRenderer psr = particle.GetComponentInChildren<ParticleSystemRenderer>();
+            psr.material.color = tiers[GetTier()].color;
+
+            psr.material.EnableKeyword("_EMISSION");
+            psr.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
+            psr.material.SetColor("_EmissionColor",tiers[GetTier()].color * 1f);
+
             particle.transform.position = pos;
             particle.SetActive(true);
             particle.GetComponentInChildren<ParticleSystem>().Play();
         }
        
     }
-    public void TakeDamage(int Damage)
+    public virtual void TakeDamage(int Damage)
     {
         powerLevel -= Damage;
     }
