@@ -9,24 +9,21 @@ public class SkillCoolDownIcon : MonoBehaviour
     [SerializeField] private TMP_Text cooldownText;
     public float cooldownTime;
     public float cooldownTimer;
-    // Start is called before the first frame update
-    void Start()
+    bool cooldown;
+
+    void Awake()
     {
+        cooldown = false;
         cooldownText.gameObject.SetActive(false);
         cooldownImage.fillAmount = 0f;
+        PlayerController.instance.SkillButtonPress += SetUpCoolDownEffect; 
+        gameObject.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && !PlayerController.instance.skillCD)
-        {
-            cooldownText.gameObject.SetActive(true);
-            cooldownImage.fillAmount = 1f;
-            cooldownTime = PlayerController.instance.skillCDTimeTotal;
-            cooldownTimer = cooldownTime;
-        }
-        if (PlayerController.instance.skillCD)
+        if (cooldown)
         {
             ApplyCoolDownEffect();
         }
@@ -38,12 +35,21 @@ public class SkillCoolDownIcon : MonoBehaviour
         {
             cooldownText.gameObject.SetActive(false);
             cooldownImage.fillAmount = 0f;
+            cooldown = false;
         }
         else
         {
             cooldownText.text = cooldownTimer.ToString("F1");
             cooldownImage.fillAmount = cooldownTimer / cooldownTime;
         }
+    }
+    public void SetUpCoolDownEffect(object sender, float time)
+    {
+        cooldown = true;
+        cooldownText.gameObject.SetActive(true);
+        cooldownImage.fillAmount = 1f;
+        cooldownTime = time;
+        cooldownTimer = cooldownTime;
     }
 
 }

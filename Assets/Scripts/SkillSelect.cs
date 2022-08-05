@@ -6,17 +6,15 @@ public class SkillSelect : MonoBehaviour
 {
     public Transform skillUI;
     public List<Sprite> skillIcon;
-    // Start is called before the first frame update
+
     void Start()
     {
-        // skillUI.gameObject.SetActive(false);
         Time.timeScale = 0f;
-        // skillUI.gameObject.SetActive(false);
     }
     public void SelectLaserSkill()
     {
         PlayerController.instance.SetUpLaserSkill();
-        skillUI.GetComponent<Image>().sprite = skillIcon[0];
+        ChangeSkillUI(0);
         skillUI.gameObject.SetActive(true);
         Time.timeScale = 1f;
         gameObject.SetActive(false);
@@ -24,9 +22,22 @@ public class SkillSelect : MonoBehaviour
     public void SelectShieldSkill()
     {
         PlayerController.instance.SetUpShieldSkill();
-        skillUI.GetComponent<Image>().sprite = skillIcon[1];
+        ChangeSkillUI(1);
+
         skillUI.gameObject.SetActive(true);
         Time.timeScale = 1f;
         gameObject.SetActive(false);
+    }
+    public void SelectBombSkill()
+    {
+        PlayerController.instance.SetUpBombSkill();
+        ChangeSkillUI(2);
+        skillUI.gameObject.SetActive(true);
+        Time.timeScale = 1f;
+        gameObject.SetActive(false);
+    }
+    public void ChangeSkillUI(int index)
+    {
+        skillUI.GetComponent<Image>().sprite = skillIcon[index];
     }
 }

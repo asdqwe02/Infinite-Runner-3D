@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     private bool entityRotatedSideway;
     public static PlayerController instance;
     public event EventHandler<RotateEventArgs> RotateEntity;
+    public event EventHandler<float> SkillButtonPress;
     private Vector3 _sidewayDirection;
     public Transform entityPrefab;
     public Transform formation;
@@ -41,6 +42,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        SetUpLaserSkill();
         if (instance == null)
             instance = this;
         else
@@ -97,8 +99,9 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && !skillCD)
         {
-            skillCD = true;
             skill();
+            skillCD = true;
+
         }
     }
     public void MoveEntitySideWay()
@@ -116,6 +119,10 @@ public class PlayerController : MonoBehaviour
     {
         // Debug.Log("entity turning event called");
         RotateEntity?.Invoke(this, e);
+    }
+    protected virtual void OnSkillPress(float e)
+    {
+        SkillButtonPress?.Invoke(this,e);
     }
     public EntitySpawnPosition GetEntitySpawnPosition()
     {
@@ -220,20 +227,36 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(PlayerSkillCD(skillCDTime, () => skillCD = false)); // start cooldown
 
     }
+    public void BombSkill()
+    {
+        StartCoroutine(PlayerSkillCD(skillCDTime, () => skillCD = false)); // start cooldown
+    }
     public void SetUpShieldSkill()
     {
-        skill = () => {
+        skillCDTimeTotal = skillCDTime + shieldSkillTime;
+        skill = () =>
+        {
+            OnSkillPress(skillCDTimeTotal);
             StartCoroutine(ShieldSkill());
-          skillCDTimeTotal =skillCDTime + shieldSkillTime;
         };
     }
     public void SetUpLaserSkill()
     {
-        skill = () => {
+        skillCDTimeTotal = skillCDTime + laserSkillTime;
+        skill = () =>
+        {
+            OnSkillPress(skillCDTimeTotal);
             StartCoroutine(LaserSkill(3));
-            skillCDTimeTotal = skillCDTime + laserSkillTime;
         };
-     
+    }
+    public void SetUpBombSkill()
+    {
+        skillCDTimeTotal = skillCDTime;
+        skill = () =>
+        {
+            OnSkillPress(skillCDTimeTotal);
+            BombSkill();
+        };
     }
 
 }

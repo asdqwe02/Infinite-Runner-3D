@@ -51,7 +51,7 @@ public static class Utility
         List<EntitySpawnPosition> tmpList = new List<EntitySpawnPosition>();
         foreach (var pos in list)
         {
-            if (pos.entity !=null)
+            if (pos.entity != null)
                 tmpList.Add(pos);
         }
         return tmpList;
@@ -61,20 +61,21 @@ public static class Utility
         List<PlayerEntity> tmpList = new List<PlayerEntity>();
         foreach (var pos in list)
         {
-            if (pos.entity !=null)
+            if (pos.entity != null)
                 tmpList.Add(pos.entity.GetComponent<PlayerEntity>());
         }
         return tmpList;
     }
 
-    public static GameObject GetChildWithName(GameObject obj, string name) 
+    public static GameObject GetChildWithName(GameObject obj, string name)
     {
         Transform trans = obj.transform;
-        Transform childTrans = trans. Find(name);
-        if (childTrans != null) 
+        Transform childTrans = trans.Find(name);
+        if (childTrans != null)
         {
             return childTrans.gameObject;
-        } else 
+        }
+        else
         {
             return null;
         }
@@ -88,12 +89,17 @@ public static class Utility
     public static List<Transform> GetChildWithTag(Transform parent, string tag)
     {
         List<Transform> tempList = new List<Transform>();
-        foreach(Transform child in parent)
-        {   
+        foreach (Transform child in parent)
+        {
             if (child.tag == tag)
                 tempList.Add(child);
         }
         return tempList;
+    }
+
+    public static float QuadraticEquation(float a, float b, float c, int sign)
+    {
+        return (-b + sign * Mathf.Sqrt(b * b - 4 * a * c)) / (2 * a);
     }
 }
 
