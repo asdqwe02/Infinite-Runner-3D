@@ -122,7 +122,7 @@ public class PlayerController : MonoBehaviour
     }
     protected virtual void OnSkillPress(float e)
     {
-        SkillButtonPress?.Invoke(this,e);
+        SkillButtonPress?.Invoke(this, e);
     }
     public EntitySpawnPosition GetEntitySpawnPosition()
     {
@@ -227,8 +227,23 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(PlayerSkillCD(skillCDTime, () => skillCD = false)); // start cooldown
 
     }
-    public void BombSkill()
+    public void BombSkill(int amount)
     {
+        List<PlayerEntity> poeList = GetRandomItemsFromList<PlayerEntity>(GetPlayerEntityInSpawnPosition(entitySpawnPositions), amount);
+        Transform currentLevel = LevelManager.instance.GetCurrentLevel();
+        List<EnemyEntity> targetedEnemy = new List<EnemyEntity>(
+            GetChildGameObjectWithScript<EnemyEntity>(currentLevel.GetComponentInChildren<EnemySpawnerController>().transform)); // WTF... AGAIN
+        Debug.Log(targetedEnemy);
+        if (targetedEnemy.Count >= 1)
+        {
+            foreach (var entity in poeList)
+            {
+                int index = UnityEngine.Random.Range(0, targetedEnemy.Count);
+                entity.ThrowBomb(targetedEnemy[index].transform);
+                targetedEnemy.RemoveAt(index);
+            }
+        }
+
         StartCoroutine(PlayerSkillCD(skillCDTime, () => skillCD = false)); // start cooldown
     }
     public void SetUpShieldSkill()
@@ -255,7 +270,7 @@ public class PlayerController : MonoBehaviour
         skill = () =>
         {
             OnSkillPress(skillCDTimeTotal);
-            BombSkill();
+            BombSkill(4);
         };
     }
 

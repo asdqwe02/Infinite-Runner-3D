@@ -30,6 +30,19 @@ public static class Utility
         }
         return tmpList;
     }
+    public static List<T> GetChildGameObjectWithScript<T>(Transform parent)
+    {
+        List<T> tmpList = new List<T>();
+        foreach (Transform child in parent)
+        {
+            T temp = child.GetComponent<T>();
+            if (temp != null)
+            {
+                tmpList.Add(temp);
+            }
+        }
+        return tmpList;
+    }
 
     public static int[] PartitionPowerLevel(int powerLevel, int n)
     {
@@ -101,5 +114,6 @@ public static class Utility
     {
         return (-b + sign * Mathf.Sqrt(b * b - 4 * a * c)) / (2 * a);
     }
+
 }
 

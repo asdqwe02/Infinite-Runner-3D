@@ -8,6 +8,8 @@ TagManager:
   - EnemyEntity
   - ParticleBodyExplode
   - Laser
+  - Explosion
+  - ExplosionVFX
   layers:
   - Default
   - TransparentFX

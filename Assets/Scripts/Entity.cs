@@ -22,6 +22,8 @@ public class Entity : MonoBehaviour
     }
     public int GetTier() // this doesn't even work it's stupid as fuck
     {
+        if (powerLevel <=0)
+            return 0;
         for (int i=0 ; i<tiers.Count-1;i++)
         {
             if (  powerLevel >= tiers[i].minPower  && powerLevel<=tiers[i].maxPower)

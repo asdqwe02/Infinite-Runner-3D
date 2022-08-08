@@ -4,49 +4,91 @@ using UnityEngine;
 using static Utility;
 public class Bomb : MonoBehaviour
 {
-    public Transform _firePoint;
-    public Transform target;
+    [SerializeField] private Transform _firePoint;
+    [SerializeField] private Transform _target;
     public float time;
     public float speed;
-    public float upSpeed;
-    public float counter;
-    Rigidbody rb;
+    public int damage;
+    float startTime;
+    Vector3 centerPoint, startRelCenter, endRelCenter;
     public Transform eplodeEffect;
-
-    private void Start()
+    [SerializeField] private List<EnemyEntity> enemyEntities;
+    private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
-        counter = time;
+        enemyEntities = new List<EnemyEntity>();
     }
     private void Update()
     {
-    }
-    private void FixedUpdate()
-    {
-        Vector3 direction = target.position - transform.position;
-        rb.velocity = direction.normalized * speed;
-       
-        if (Vector3.Distance(transform.position, target.position) <= 1)
+        if (Vector3.Distance(transform.position, _target.position) <= 1 || _target.gameObject.activeSelf == false)
+        {
             Explode();
-        // if (counter > 0)
-        // {
-        //     counter -= Time.fixedDeltaTime;
-        //     rb.velocity = Vector3.up * upSpeed;
+        }
+        GetCenter(Vector3.up);
+        float fracComplete = (Time.time - startTime) / time * speed;
+        transform.position = Vector3.Slerp(startRelCenter, endRelCenter, fracComplete * speed);
+        transform.position += centerPoint;
+    }
+    public void SetUp(Transform target, Transform firepoint, int damage)
+    {
+        _target = target;
+        _firePoint = firepoint;
+        this.damage = damage;
+        startTime = Time.time;
+    }
 
-        // }
-        // else
-        // {
-        //     Vector3 direction = target.position - transform.position;
-        //     rb.velocity = direction.normalized * speed;
-        //     transform.LookAt(target.position);
-        //     if (Vector3.Distance(transform.position, target.position) <= 0)
-        //         Explode();
-        // }
-
+    public void GetCenter(Vector3 direction)
+    {
+        centerPoint = (_firePoint.position + _target.position) * .5f;
+        centerPoint -= direction;
+        startRelCenter = _firePoint.position - centerPoint;
+        endRelCenter = _target.position - centerPoint;
     }
     private void Explode()
     {
-        eplodeEffect.gameObject.SetActive(true);
-    }
+        // Deal damage
+        foreach (EnemyEntity ee in enemyEntities)
+        {
+            if (ee.gameObject.activeSelf)
+            {
+                ee.TakeDamage(damage);
+                if (ee.powerLevel <= 0)
+                {
+                    ee.Kill();
+                }
+            }
+        }
 
+        // spawn Explosion VFX
+        GameObject explodeVFX = ObjectPooler.instance.GetPooledObject("ExplosionVFX");
+        if (explodeVFX != null)
+        {
+            explodeVFX.transform.parent = null;
+            explodeVFX.transform.position = transform.position;
+            explodeVFX.SetActive(true);
+        }
+
+
+        // disable the bomb
+        transform.parent = ObjectPooler.instance.transform;
+        enemyEntities.Clear();
+        gameObject.SetActive(false);
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("EnemyEntity"))
+        {
+            enemyEntities.Add(other.GetComponent<EnemyEntity>());
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("EnemyEntity"))
+        {
+            EnemyEntity ee = other.GetComponent<EnemyEntity>();
+            if (enemyEntities.Contains(ee))
+            {
+                enemyEntities.Remove(ee);
+            }
+        }
+    }
 }

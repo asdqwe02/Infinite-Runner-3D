@@ -9,7 +9,7 @@ public class PlayerEntity : Entity
     [SerializeField] private float _offsetZ;
     public float catchUpSpeed;
     private Animator animator;
-    private Vector3 _default_pos;
+    [SerializeField] private Vector3 _default_pos;
     public int currentTier; // for debugging only
     public Transform laserTarget;
     public Transform laserPoint;
@@ -43,7 +43,11 @@ public class PlayerEntity : Entity
 
         // _renderer = GetComponentInChildren<SkinnedMeshRenderer>(); // don't use this
     }
-
+    private void OnEnable()
+    {
+        _default_pos = transform.localPosition;
+        BackToGround();
+    }
     // Update is called once per frame
     void Update()
     {
@@ -90,6 +94,7 @@ public class PlayerEntity : Entity
     {
         flying = false;
         // transform.rotation = Quaternion.identity;
+
         _default_pos.y = -PlayerController.instance.transform.position.y;
         animator.SetBool("IsFlying", false);
         animator.SetBool("Running", true);
@@ -97,7 +102,6 @@ public class PlayerEntity : Entity
     private void OnDisable()
     {
         BackToGround();
-
     }
     public override void ChangeAppearance()
     {
@@ -120,15 +124,15 @@ public class PlayerEntity : Entity
     }
     public override void TakeDamage(int Damage)
     {
-        int finalDamage = Damage;     
+        int finalDamage = Damage;
         int pePL = powerLevel; // save old player powerlevel
-        finalDamage -=_shield;
+        finalDamage -= _shield;
 
         powerLevel -= finalDamage;
         _shield -= Damage;
-        if (powerLevel<=0)
+        if (powerLevel <= 0)
             PlayerController.instance.totalPowerLevel -= pePL;
-        else 
+        else
         {
             PlayerController.instance.totalPowerLevel -= finalDamage;
         }
@@ -136,6 +140,15 @@ public class PlayerEntity : Entity
         {
             // ParticleExplode();
             DisableShield();
+        }
+    }
+    public void ThrowBomb(Transform target)
+    {
+        GameObject bomb = ObjectPooler.instance.GetPooledObject("Explosion");
+        if (bomb != null)
+        {
+            bomb.GetComponent<Bomb>().SetUp(target, transform, powerLevel);
+            bomb.SetActive(true);
         }
     }
 }

@@ -12,8 +12,8 @@ public class ParticleStopScript : MonoBehaviour
 
     void OnParticleSystemStopped()
     {
-        transform.parent.parent = ObjectPooler.instance.transform;
-        transform.parent.localPosition = Vector3.zero;
-        transform.parent.gameObject.SetActive(false);
+        transform.parent = ObjectPooler.instance.transform;
+        transform.localPosition = Vector3.zero;
+        transform.gameObject.SetActive(false);
     }
 }

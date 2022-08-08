@@ -16,10 +16,12 @@ public class SkillCoolDownIcon : MonoBehaviour
         cooldown = false;
         cooldownText.gameObject.SetActive(false);
         cooldownImage.fillAmount = 0f;
-        PlayerController.instance.SkillButtonPress += SetUpCoolDownEffect; 
         gameObject.SetActive(false);
     }
-
+    private void Start()
+    {
+        PlayerController.instance.SkillButtonPress += SetUpCoolDownEffect;
+    }
     // Update is called once per frame
     void Update()
     {
