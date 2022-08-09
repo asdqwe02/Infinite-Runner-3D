@@ -34,8 +34,9 @@ public class Bomb : MonoBehaviour
         _firePoint = firepoint;
         this.damage = damage;
         startTime = Time.time;
+        AudioManager.instance.PlaySound(AudioManager.Sound.BombSizzle);
     }
-
+ 
     public void GetCenter(Vector3 direction)
     {
         centerPoint = (_firePoint.position + _target.position) * .5f;
@@ -65,6 +66,7 @@ public class Bomb : MonoBehaviour
             explodeVFX.transform.parent = null;
             explodeVFX.transform.position = transform.position;
             explodeVFX.SetActive(true);
+            AudioManager.instance.PlaySound(AudioManager.Sound.BombExplode, transform.position);
         }
 
 

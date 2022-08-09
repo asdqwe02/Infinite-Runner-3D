@@ -46,6 +46,8 @@ public static class Utility
 
     public static int[] PartitionPowerLevel(int powerLevel, int n)
     {
+        if (n<=0)
+            return new int[1]{1}; // hacky patchy fix for dumb and weird bug
         int k = powerLevel / n;
         int ct = powerLevel % n;
         int i;

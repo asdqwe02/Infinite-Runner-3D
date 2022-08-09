@@ -193,8 +193,9 @@ public class PlayerController : MonoBehaviour
                 }
                 flyingEntity.Add(pos.entity.GetComponent<PlayerEntity>());
             }
+            GameObject laserSound = AudioManager.instance.PlaySound(AudioManager.Sound.LaserBeam);
             yield return new WaitForSeconds(laserSkillTime);
-
+            Destroy(laserSound);
             // return flying entity to normal running state
             foreach (var entity in flyingEntity)
             {
@@ -218,6 +219,7 @@ public class PlayerController : MonoBehaviour
         {
             entity.SetUpShield();
         }
+        AudioManager.instance.PlaySound(AudioManager.Sound.Shield);
         yield return new WaitForSeconds(shieldSkillTime);
         // remove shield effect
         foreach (var entity in peList)
@@ -234,14 +236,16 @@ public class PlayerController : MonoBehaviour
         List<EnemyEntity> targetedEnemy = new List<EnemyEntity>(
             GetChildGameObjectWithScript<EnemyEntity>(currentLevel.GetComponentInChildren<EnemySpawnerController>().transform)); // WTF... AGAIN
         Debug.Log(targetedEnemy);
-        if (targetedEnemy.Count >= 1)
+
+        foreach (var entity in poeList)
         {
-            foreach (var entity in poeList)
+            if (targetedEnemy.Count >= 1)
             {
                 int index = UnityEngine.Random.Range(0, targetedEnemy.Count);
                 entity.ThrowBomb(targetedEnemy[index].transform);
                 targetedEnemy.RemoveAt(index);
             }
+
         }
 
         StartCoroutine(PlayerSkillCD(skillCDTime, () => skillCD = false)); // start cooldown

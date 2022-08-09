@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6014327595177153511
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6014327595177153513}
+  - component: {fileID: 6014327595177153510}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6014327595177153513
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6014327595177153511}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1375.8418, y: 295.70032, z: -1747.7296}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6014327595177153510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6014327595177153511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e2238fc7ad8d34194dd66c6a34534a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundAudiosClipArray:
+  - name: Bomb Sizzle SFX
+    sound: 0
+    audioClip: {fileID: 8300000, guid: 6c1525b6f24573b40a9f6d97f8c43eec, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+  - name: Bomb Explode SFX
+    sound: 1
+    audioClip: {fileID: 8300000, guid: 579f79f1837fd1d4a8d4f6676bb2b67c, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+  - name: Laser Beam SFX
+    sound: 3
+    audioClip: {fileID: 8300000, guid: 843b781f570d86146bb71c90c41fb007, type: 3}
+    volume: 0.65
+    pitch: 1.5
+    loop: 0
+  - name: Pop SFX
+    sound: 2
+    audioClip: {fileID: 8300000, guid: 5734d86f42503524c8b9c1bfb4bbdff4, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+  - name: Shield SFX
+    sound: 4
+    audioClip: {fileID: 8300000, guid: a0a08681d61dc85478eeeaa0d253b222, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+  - name: Button Click SFX
+    sound: 5
+    audioClip: {fileID: 8300000, guid: 3f90c4f7b2f5e8f4b8c852f50b05b4d2, type: 3}
+    volume: 0.6
+    pitch: 1
+    loop: 0
+  soundTrackArray: []

@@ -94,8 +94,8 @@ public class PlayerEntity : Entity
     {
         flying = false;
         // transform.rotation = Quaternion.identity;
-
-        _default_pos.y = -PlayerController.instance.transform.position.y;
+        if (PlayerController.instance!=null)
+            _default_pos.y = -PlayerController.instance.transform.position.y;
         animator.SetBool("IsFlying", false);
         animator.SetBool("Running", true);
     }

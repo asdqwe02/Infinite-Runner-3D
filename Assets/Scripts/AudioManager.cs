@@ -28,18 +28,17 @@ public class AudioManager : MonoBehaviour
 
     public enum Sound
     {
-      
-
+        BombSizzle,
+        BombExplode,
+        Pop,
+        LaserBeam,
+        Shield,
+        ButtonClick,
     }
     public enum SoundTrack
-    {
-        GameOverST,
-        HideoutST,
-        NormalLevelST,
-        MainMenuST,
-        BossST1,
-        BossST2,
-        BossST2_Phase2,
+    {    
+        ST01,
+        ST02,
         None = -1,
 
     }
@@ -77,16 +76,16 @@ public class AudioManager : MonoBehaviour
         // PlaySoundTrack(SoundTrack.NormalLevelST);
         switch (SceneManager.GetActiveScene().name)
         {
-            case "Hideout":
-                PlaySoundTrack(SoundTrack.HideoutST);
-                break;
-            case "MainMenu":
-                PlaySoundTrack(SoundTrack.MainMenuST);
-                break;
             default:
                 break;
         }
-        DontDestroyOnLoad(gameObject);
+        soundTimerArray = new soundTimer[0];
+        if (SceneManager.GetActiveScene().buildIndex==0)
+        {
+            PlaySoundTrack(SoundTrack.ST02);
+        }
+        else Destroy(soundTrackGameObject);
+        // DontDestroyOnLoad(gameObject);
     }
     void Start()
     {
@@ -102,10 +101,11 @@ public class AudioManager : MonoBehaviour
     {
         if (CanPlaySound(sound))
         {
-            GameObject soundGameObject = new GameObject("Spacial Sound");
+            GameObject soundGameObject = new GameObject("Spacial Sound ");
             soundGameObject.transform.position = position;
             AudioSource audioSource = soundGameObject.AddComponent<AudioSource>();
             SoundAudioClip<Sound> s = System.Array.Find(soundAudiosClipArray, Sound => Sound.sound == sound);
+            soundGameObject.name += s.name;
             audioSource.loop = s.loop;
             audioSource.volume = s.volume;
             audioSource.pitch = s.pitch;
@@ -119,23 +119,26 @@ public class AudioManager : MonoBehaviour
                 Destroy(soundGameObject, audioSource.clip.length);
         }
     }
-    public void PlaySound(Sound sound)
+    public GameObject PlaySound(Sound sound)
     {
         if (CanPlaySound(sound))
         {
             if (oneShotGameObject == null)
             {
-                oneShotGameObject = new GameObject("One Shot Sound");
+                oneShotGameObject = new GameObject("One Shot Sound ");
                 oneShotAudioSource = oneShotGameObject.AddComponent<AudioSource>();
             }
             //GameObject soundGameObject = new GameObject("Sound");
             //AudioSource audioSource = soundGameObject.AddComponent<AudioSource>();
             SoundAudioClip<Sound> s = System.Array.Find(soundAudiosClipArray, Sound => Sound.sound == sound);
+            oneShotGameObject.name += s.name;
             oneShotAudioSource.loop = s.loop;
             oneShotAudioSource.volume = s.volume;
             oneShotAudioSource.pitch = s.pitch;
             oneShotAudioSource.PlayOneShot(GetAudioClip(sound));
+            return oneShotGameObject;
         }
+        return null;
 
     }
     public void PlaySoundTrack(SoundTrack soundTrack)
@@ -187,6 +190,7 @@ public class AudioManager : MonoBehaviour
 
     private static bool CanPlaySound(Sound sound)
     {
+        // for sound like foot step and such
         soundTimer soundT = System.Array.Find(soundTimerArray, soundtimer => soundtimer.soundType == sound);
         if (soundT != null)
         {

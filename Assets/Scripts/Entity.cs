@@ -67,6 +67,7 @@ public class Entity : MonoBehaviour
             particle.transform.position = pos;
             particle.SetActive(true);
             particle.GetComponentInChildren<ParticleSystem>().Play();
+            AudioManager.instance.PlaySound(AudioManager.Sound.Pop,transform.position);
         }
        
     }

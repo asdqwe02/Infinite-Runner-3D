@@ -52,6 +52,7 @@ public class EnemyEntity : Entity
     {
         if (target!=null)
             target = null;
+        GameManager.instance.AddScore(10);
         ParticleExplode();
         base.Kill();
     }
