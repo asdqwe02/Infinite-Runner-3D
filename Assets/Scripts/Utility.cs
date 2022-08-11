@@ -46,8 +46,8 @@ public static class Utility
 
     public static int[] PartitionPowerLevel(int powerLevel, int n)
     {
-        if (n<=0)
-            return new int[1]{1}; // hacky patchy fix for dumb and weird bug
+        if (n <= 0)
+            return new int[1] { 1 }; // hacky patchy fix for dumb and weird bug
         int k = powerLevel / n;
         int ct = powerLevel % n;
         int i;
@@ -116,6 +116,13 @@ public static class Utility
     {
         return (-b + sign * Mathf.Sqrt(b * b - 4 * a * c)) / (2 * a);
     }
-
+    public static Color ConvertColor(float red, float green, float blue, float alpha)
+    {
+        return new Color(red / 255.0f, green / 255.0f, blue / 255.0f, alpha / 255.0f);
+    }
+    public static Color ConvertColor(float red, float green, float blue)
+    {
+        return new Color(red / 255.0f, green / 255.0f, blue / 255.0f);
+    }
 }
 

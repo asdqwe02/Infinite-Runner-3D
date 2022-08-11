@@ -26,7 +26,7 @@ public class LevelLoader : MonoBehaviour
     public IEnumerator LoadAsync(int index)
     {
         AsyncOperation operation = SceneManager.LoadSceneAsync(index);
-        // operation.allowSceneActivation = false; // debug purpose
+        operation.allowSceneActivation = false; // debug purpose
         loadingScreen.SetActive(true);
         float progress;
         while (!operation.isDone)
@@ -34,6 +34,14 @@ public class LevelLoader : MonoBehaviour
             progress = Mathf.Clamp01(operation.progress / .9f);
             progressSlider.value = progress;
             progressText.text = (progress * 100f).ToString("#.##") + "%";
+            if (operation.progress >= 0.9f)
+            {
+
+                progressText.text = "99%";
+                progressSlider.value = .99f;
+                yield return new WaitForSeconds(1f);
+                operation.allowSceneActivation = true; 
+            }
             yield return null;
         }
     }

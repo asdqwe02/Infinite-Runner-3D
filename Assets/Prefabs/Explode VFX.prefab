@@ -9746,6 +9746,7 @@ GameObject:
   - component: {fileID: 945811688892711971}
   - component: {fileID: 945811688892711968}
   - component: {fileID: 3645651907762027415}
+  - component: {fileID: 8870943057980712851}
   m_Layer: 0
   m_Name: Explode VFX
   m_TagString: ExplosionVFX
@@ -14612,6 +14613,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 749862cc832d121459366cb36348e6e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8870943057980712851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 945811688892712030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5236e36d9f89d8f45bdbe40886975eda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blast: {fileID: 945811689578469074}
+  spark: {fileID: 945811688611646811}
 --- !u!1 &945811689578469075
 GameObject:
   m_ObjectHideFlags: 0

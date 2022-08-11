@@ -40,4 +40,11 @@ public class SkillSelect : MonoBehaviour
     {
         skillUI.GetComponent<Image>().sprite = skillIcon[index];
     }
+    private void OnDisable() {
+        SpawnInitialEnnemy();
+    }
+    public void SpawnInitialEnnemy()
+    {
+        LevelManager.instance.GetCurrentLevel().GetComponentInChildren<PlateController>().currentEnenmySpawner.SpawnEnemyEntity(); // bad fix 
+    }
 }

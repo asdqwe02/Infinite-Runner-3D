@@ -59,7 +59,7 @@ MonoBehaviour:
   - name: Laser Beam SFX
     sound: 3
     audioClip: {fileID: 8300000, guid: 843b781f570d86146bb71c90c41fb007, type: 3}
-    volume: 0.65
+    volume: 0.4
     pitch: 1.5
     loop: 0
   - name: Pop SFX
@@ -80,4 +80,16 @@ MonoBehaviour:
     volume: 0.6
     pitch: 1
     loop: 0
-  soundTrackArray: []
+  soundTrackArray:
+  - name: Sound track 1
+    sound: 0
+    audioClip: {fileID: 8300000, guid: ccf39d3160130d74ebf500645b90d06d, type: 3}
+    volume: 0.5
+    pitch: 1
+    loop: 1
+  - name: Sound track 2
+    sound: 1
+    audioClip: {fileID: 8300000, guid: c3b39f63b0f718845a546b6ce0cfc42a, type: 3}
+    volume: 0.5
+    pitch: 1
+    loop: 1

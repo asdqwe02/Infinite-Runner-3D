@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        totalPowerLevel=1;
         _turnState = TurningState.forward;
         entityRotatedSideway = false;
         entitySpawnPositions = new List<EntitySpawnPosition>();
@@ -187,7 +188,7 @@ public class PlayerController : MonoBehaviour
                 entity.FlyUp();
                 if (laser != null)
                 {
-                    laser.SetUp(entity, laserSkillTime, entity.powerLevel);
+                    laser.SetUp(entity, laserSkillTime, entity.powerLevel, pos.entity.GetComponent<PlayerEntity>().Renderer.material.color);
                     laser.gameObject.SetActive(true);
                     entityLaser.Add(laser);
                 }
@@ -276,6 +277,14 @@ public class PlayerController : MonoBehaviour
             OnSkillPress(skillCDTimeTotal);
             BombSkill(4);
         };
+    }
+    public void TriggerSkill()
+    {
+        if (skill != null && !skillCD)
+        {
+            skill();
+            skillCD = true;
+        }
     }
 
 }

@@ -25,7 +25,36 @@ public class AudioManager : MonoBehaviour
     private static AudioSource oneShotAudioSource;
     private static GameObject soundTrackGameObject;
     private static AudioSource soundTrackAudioSource;
+    [Range(0f, 1f)]
+    [SerializeField] private float _masterVolumeMultiplier;
+    [Range(0f, 1f)]
+    [SerializeField] private float _soundTrackVolume;
+    public float MVM
+    {
+        get
+        {
+            return _masterVolumeMultiplier;
+        }
+        set
+        {
+            _masterVolumeMultiplier = value;
+            OnMasterVolumeChange();
 
+        }
+    }
+    public float STV
+    {
+        get
+        {
+            return _soundTrackVolume;
+        }
+        set
+        {
+            _soundTrackVolume = value;
+            OnSoundTrackVolumeChange();
+
+        }
+    }
     public enum Sound
     {
         BombSizzle,
@@ -36,9 +65,11 @@ public class AudioManager : MonoBehaviour
         ButtonClick,
     }
     public enum SoundTrack
-    {    
+    {
         ST01,
         ST02,
+        ST03,
+        ST03_1,
         None = -1,
 
     }
@@ -80,12 +111,12 @@ public class AudioManager : MonoBehaviour
                 break;
         }
         soundTimerArray = new soundTimer[0];
-        if (SceneManager.GetActiveScene().buildIndex==0)
+        if (SceneManager.GetActiveScene().buildIndex == 0)
         {
             PlaySoundTrack(SoundTrack.ST02);
         }
         else Destroy(soundTrackGameObject);
-        // DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject);
     }
     void Start()
     {
@@ -107,7 +138,7 @@ public class AudioManager : MonoBehaviour
             SoundAudioClip<Sound> s = System.Array.Find(soundAudiosClipArray, Sound => Sound.sound == sound);
             soundGameObject.name += s.name;
             audioSource.loop = s.loop;
-            audioSource.volume = s.volume;
+            audioSource.volume = s.volume * MVM;
             audioSource.pitch = s.pitch;
             audioSource.spatialBlend = 1f;
             audioSource.rolloffMode = AudioRolloffMode.Linear;
@@ -133,7 +164,7 @@ public class AudioManager : MonoBehaviour
             SoundAudioClip<Sound> s = System.Array.Find(soundAudiosClipArray, Sound => Sound.sound == sound);
             oneShotGameObject.name += s.name;
             oneShotAudioSource.loop = s.loop;
-            oneShotAudioSource.volume = s.volume;
+            oneShotAudioSource.volume = s.volume * MVM;
             oneShotAudioSource.pitch = s.pitch;
             oneShotAudioSource.PlayOneShot(GetAudioClip(sound));
             return oneShotGameObject;
@@ -152,7 +183,7 @@ public class AudioManager : MonoBehaviour
         SoundAudioClip<SoundTrack> s = System.Array.Find(soundTrackArray, SoundTrack => SoundTrack.sound == soundTrack);
         soundTrackAudioSource.name = s.name;
         soundTrackAudioSource.loop = s.loop;
-        soundTrackAudioSource.volume = s.volume;
+        soundTrackAudioSource.volume = STV * MVM;
         soundTrackAudioSource.pitch = s.pitch;
         // soundTrackAudioSource.PlayOneShot(GetAudioClip(soundTrack));
         soundTrackAudioSource.clip = GetAudioClip(soundTrack);
@@ -224,4 +255,18 @@ public class AudioManager : MonoBehaviour
         yield break;
     }
 
+    public virtual void OnMasterVolumeChange()
+    {
+        if (soundTrackGameObject != null)
+        {
+            soundTrackAudioSource.volume = STV * MVM; // redundant 
+        }
+    }
+    public virtual void OnSoundTrackVolumeChange()
+    {
+        if (soundTrackGameObject != null)
+        {
+            soundTrackAudioSource.volume = STV * MVM; // redundant
+        }
+    }
 }

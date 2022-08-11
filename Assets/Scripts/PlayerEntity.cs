@@ -147,7 +147,7 @@ public class PlayerEntity : Entity
         GameObject bomb = ObjectPooler.instance.GetPooledObject("Explosion");
         if (bomb != null)
         {
-            bomb.GetComponent<Bomb>().SetUp(target, transform, powerLevel);
+            bomb.GetComponent<Bomb>().SetUp(target, transform, powerLevel,tiers[GetTier()].color);
             bomb.SetActive(true);
         }
     }

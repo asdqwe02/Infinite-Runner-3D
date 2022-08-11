@@ -13,9 +13,14 @@ public class Bomb : MonoBehaviour
     Vector3 centerPoint, startRelCenter, endRelCenter;
     public Transform eplodeEffect;
     [SerializeField] private List<EnemyEntity> enemyEntities;
+    ParticleSystemRenderer psr;
+    TrailRenderer tr;
+    Color color;
     private void Awake()
     {
         enemyEntities = new List<EnemyEntity>();
+        psr = GetComponent<ParticleSystemRenderer>();
+        tr = GetComponentInChildren<TrailRenderer>();
     }
     private void Update()
     {
@@ -28,15 +33,28 @@ public class Bomb : MonoBehaviour
         transform.position = Vector3.Slerp(startRelCenter, endRelCenter, fracComplete * speed);
         transform.position += centerPoint;
     }
-    public void SetUp(Transform target, Transform firepoint, int damage)
+    public void SetUp(Transform target, Transform firepoint, int damage, Color color)
     {
         _target = target;
         _firePoint = firepoint;
         this.damage = damage;
+        this.color = color;
+
+        // bomb color
+        psr.material.color = color;
+        psr.material.EnableKeyword("_EMISSION");
+        psr.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
+        psr.material.SetColor("_EmissionColor", color * 1.4f); // hdr intensity should be 1.5f or 1.43...
+
+        // trail color
+        // tr.material.EnableKeyword("_EMISSION");
+        tr.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
+        tr.material.SetColor("_Color1", color * 2.347384f);
+
         startTime = Time.time;
         AudioManager.instance.PlaySound(AudioManager.Sound.BombSizzle);
     }
- 
+
     public void GetCenter(Vector3 direction)
     {
         centerPoint = (_firePoint.position + _target.position) * .5f;
@@ -65,6 +83,8 @@ public class Bomb : MonoBehaviour
         {
             explodeVFX.transform.parent = null;
             explodeVFX.transform.position = transform.position;
+            explodeVFX.GetComponent<ExplodeVFXController>().SetUp(color);
+
             explodeVFX.SetActive(true);
             AudioManager.instance.PlaySound(AudioManager.Sound.BombExplode, transform.position);
         }

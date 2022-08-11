@@ -39,15 +39,17 @@ public class EnemySpawnerController : MonoBehaviour
         {
             for (int i = 0; i < maxPowerLevel; i++)
             {
-                Vector3 randomPos = transform.position + new Vector3(Random.Range(-offsetX, offsetX), 0, Random.Range(-offsetZ, offsetZ));
-                while (enemyPos.Contains(randomPos))
-                {
-                    randomPos = new Vector3(Random.Range(-offsetX, offsetX), 0, Random.Range(-offsetZ, offsetZ));
-                }
-                enemyPos.Add(randomPos);
+                Debug.Log("spawn enemy dummy");
                 GameObject ee = ObjectPooler.instance.GetPooledObject("EnemyEntity");
                 if (ee != null)
                 {
+                    Vector3 randomPos = transform.position + new Vector3(Random.Range(-offsetX, offsetX), 0, Random.Range(-offsetZ, offsetZ));
+                    while (enemyPos.Contains(randomPos))
+                    {
+                        randomPos = new Vector3(Random.Range(-offsetX, offsetX), 0, Random.Range(-offsetZ, offsetZ));
+                    }
+                    enemyPos.Add(randomPos);
+                    
                     ee.transform.position = randomPos;
                     ee.GetComponent<EnemyEntity>().ChangeAppearance();
                     ee.transform.parent = transform;

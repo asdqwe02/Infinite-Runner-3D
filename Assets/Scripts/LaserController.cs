@@ -49,13 +49,18 @@ public class LaserController : MonoBehaviour
         target = null;
         StartCoroutine(DealDamage());
     }
-    private void OnDisable() {
+    private void OnDisable()
+    {
         targetList.Clear();
     }
 
-    public void SetUp(PlayerEntity entity,float duration,int damage) // note: add power level in this shit
+    public void SetUp(PlayerEntity entity, float duration, int damage, Color color)
     {
         vfx.SetFloat("Duration", duration);
+        float intensity = Mathf.Pow(2, 1.427857f); // intensity calculation is wrong
+        Vector4 hdrColor = new Vector4(color.r * intensity, color.g * intensity, color.b * intensity, color.a* intensity);
+        // Debug.Log("HDR COLOR:" + hdrColor);
+        vfx.SetVector4("Beam Core Color", hdrColor);
         playerEntity = entity;
         transform.parent = entity.laserPoint;
         _damage = damage;
@@ -69,23 +74,23 @@ public class LaserController : MonoBehaviour
         targetList.Remove(target);
         target = null;
         transform.rotation = Quaternion.identity;
-        vfx.SetFloat("BeamLength",0);
+        vfx.SetFloat("BeamLength", 0);
     }
     public IEnumerator DealDamage()
     {
         while (gameObject.activeSelf)
         {
             yield return new WaitForSeconds(0.5f);
-            if (target !=null && target.gameObject.activeSelf)
+            if (target != null && target.gameObject.activeSelf)
             {
                 EnemyEntity entity = target.GetComponent<EnemyEntity>();
                 entity.TakeDamage(_damage);
                 Debug.Log("deal laser damage ");
-                if (entity.powerLevel<=0)
+                if (entity.powerLevel <= 0)
                 {
                     entity.powerLevel = 1; /// dumb fix to a small visual bug
                     targetList.Remove(target);
-                    target=null;
+                    target = null;
                     entity.Kill();
                 }
             }
