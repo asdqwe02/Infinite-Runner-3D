@@ -39,7 +39,7 @@ public class EnemySpawnerController : MonoBehaviour
         {
             for (int i = 0; i < maxPowerLevel; i++)
             {
-                Debug.Log("spawn enemy dummy");
+                // Debug.Log("spawn enemy dummy");
                 GameObject ee = ObjectPooler.instance.GetPooledObject("EnemyEntity");
                 if (ee != null)
                 {

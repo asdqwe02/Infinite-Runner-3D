@@ -40,7 +40,7 @@ TextureImporter:
     second: 1bit 16px icons part-2 outlines_11
   - first:
       213: 5658970638933912547
-    second: 1bit 16px icons part-2 outlines_12
+    second: Cogwheel1
   - first:
       213: -7367828421362387966
     second: 1bit 16px icons part-2 outlines_13
@@ -1705,7 +1705,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 1bit 16px icons part-2 outlines_12
+      name: Cogwheel1
       rect:
         serializedVersion: 2
         x: 295

@@ -20,7 +20,7 @@ public class EnemyEntity : Entity
         if (target != null && target.gameObject.activeSelf)
         {
             Vector3 pos = target.position;
-            pos.y=0;
+            pos.y = 0;
             transform.LookAt(pos);
             Vector3 direction = (target.position - transform.position).normalized;
             direction.y = 0;
@@ -36,7 +36,7 @@ public class EnemyEntity : Entity
             pe.TakeDamage(powerLevel);
             if (pe.powerLevel <= 0)
             {
-               
+
                 target = null;
                 pe.Kill();
             }
@@ -50,13 +50,14 @@ public class EnemyEntity : Entity
     }
     public override void Kill()
     {
-        if (target!=null)
+        if (target != null)
             target = null;
         GameManager.instance.AddScore(10);
         ParticleExplode();
         base.Kill();
     }
-    private void OnEnable() {
+    private void OnEnable()
+    {
         hit = false;
         target = null;
         animator.SetBool("Running", false);
@@ -67,5 +68,12 @@ public class EnemyEntity : Entity
         List<EntitySpawnPosition> playerEntityPos = GetSpawnPositionWithEntity(PlayerController.instance.entitySpawnPositions);
         target = playerEntityPos[Random.Range(0, playerEntityPos.Count - 1)].entity;
         animator.SetBool("Running", true);
+    }
+    public override void ChangeAppearance()
+    {
+        base.ChangeAppearance();
+        Renderer.material.EnableKeyword("_EMISSION");
+        Renderer.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
+        Renderer.material.SetColor("_EmissionColor", Renderer.material.color * .5f);
     }
 }

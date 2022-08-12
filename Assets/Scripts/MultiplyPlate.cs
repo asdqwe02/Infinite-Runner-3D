@@ -4,11 +4,12 @@ using UnityEngine;
 using System.Linq;
 using System.Threading.Tasks;
 using static Utility;
+using TMPro;
 public class MultiplyPlate : MonoBehaviour
 {
     // Start is called before the first frame update
     public int number;
-    public TextMesh tm;
+    public TextMeshPro tm;
     public enum Expression
     {
         PLUS,
@@ -20,7 +21,7 @@ public class MultiplyPlate : MonoBehaviour
     public bool trigger;
     void Start()
     {
-        tm = GetComponentInChildren<TextMesh>();
+        tm = GetComponentInChildren<TextMeshPro>();
         RollMultiplyPlate();
         trigger = false;
     }

@@ -15,17 +15,17 @@ MonoBehaviour:
   tiers:
   - minPower: 0
     maxPower: 4
-    color: {r: 0.45490196, g: 0.90588236, b: 0.16470589, a: 0}
+    color: {r: 0.45353386, g: 0.9056604, b: 0.16660735, a: 1}
   - minPower: 5
     maxPower: 24
-    color: {r: 0.13992383, g: 0.4811321, b: 0.038581353, a: 0}
+    color: {r: 0.3609023, g: 1, b: 0, a: 0}
   - minPower: 25
     maxPower: 49
-    color: {r: 0.12775901, g: 0.31132078, b: 0.13193086, a: 0}
+    color: {r: 0.9056604, g: 0.5979101, b: 0.19223925, a: 0}
   - minPower: 50
     maxPower: 99
-    color: {r: 0.745283, g: 0.03163936, b: 0.6429035, a: 0}
+    color: {r: 0.7735849, g: 0.18609823, b: 0.6916929, a: 0}
   - minPower: 100
     maxPower: 0
-    color: {r: 0.5188679, g: 0.10524208, b: 0.49971864, a: 0}
+    color: {r: 1, g: 0, b: 0.95238113, a: 0}
   sizeMultiplier: 0.15
