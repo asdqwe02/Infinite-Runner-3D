@@ -143,6 +143,7 @@ MonoBehaviour:
   targetList: []
   vfx: {fileID: 6725240335295882503}
   _damage: 0
+  laserTier: {fileID: 11400000, guid: 4b5d8a46f4ad22a42a14b563d75d0972, type: 2}
   offset: 0.5
 --- !u!108 &1973145272
 Light:

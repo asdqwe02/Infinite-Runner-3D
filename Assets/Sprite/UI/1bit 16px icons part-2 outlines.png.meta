@@ -37,7 +37,7 @@ TextureImporter:
     second: 1bit 16px icons part-2 outlines_10
   - first:
       213: -8908260910652505893
-    second: 1bit 16px icons part-2 outlines_11
+    second: X-Icon
   - first:
       213: 5658970638933912547
     second: Cogwheel1
@@ -211,7 +211,7 @@ TextureImporter:
     second: 1bit 16px icons part-2 outlines_68
   - first:
       213: 1670386429198196359
-    second: 1bit 16px icons part-2 outlines_69
+    second: Sound Icon 2
   - first:
       213: -338113757045000805
     second: 1bit 16px icons part-2 outlines_70
@@ -1684,7 +1684,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 1bit 16px icons part-2 outlines_11
+      name: X-Icon
       rect:
         serializedVersion: 2
         x: 273
@@ -10709,6 +10709,27 @@ TextureImporter:
       bones: []
       spriteID: bb027d4b45c62d540800000000000000
       internalID: 5031202844793315515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sound Icon 2
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 393
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 78eddf57b976e2710800000000000000
+      internalID: 1670386429198196359
       vertices: []
       indices: 
       edges: []

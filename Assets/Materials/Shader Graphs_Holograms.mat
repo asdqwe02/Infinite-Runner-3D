@@ -39,7 +39,7 @@ Material:
     - _GlitchStrength: 0.1
     - _NoiseScale: 5
     - _NoiseStrength: 0.5
-    - _ScrollSpeed: 1
+    - _ScrollSpeed: 2
     m_Colors:
     - _FresnelColor: {r: 0, g: 6.016574, b: 5.364473, a: 0}
     - _HologramTiling: {r: 1, g: 1, b: 0, a: 0}

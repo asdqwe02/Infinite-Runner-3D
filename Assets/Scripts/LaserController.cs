@@ -9,6 +9,7 @@ public class LaserController : MonoBehaviour
     public VisualEffect vfx;
     PlayerEntity playerEntity;
     [SerializeField] private int _damage;
+    public EntityTier laserTier;
     public float offset = 0.5f;
     // Start is called before the first frame update
     void Awake()
@@ -57,8 +58,8 @@ public class LaserController : MonoBehaviour
     public void SetUp(PlayerEntity entity, float duration, int damage, Color color)
     {
         vfx.SetFloat("Duration", duration);
-        float intensity = Mathf.Pow(2, 1.427857f); // intensity calculation is wrong
-        Vector4 hdrColor = new Vector4(color.r * intensity, color.g * intensity, color.b * intensity, color.a* intensity);
+        float intensity = Mathf.Pow(2, 1.2f); // intensity calculation is wrong
+        Vector4 hdrColor = laserTier.tiers[entity.GetTier()].color*intensity;
         // Debug.Log("HDR COLOR:" + hdrColor);
         vfx.SetVector4("Beam Core Color", hdrColor);
         playerEntity = entity;
