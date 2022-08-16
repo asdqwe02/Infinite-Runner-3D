@@ -13,7 +13,7 @@ GameObject:
   m_Layer: 0
   m_Name: AudioManager
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2800000, guid: a836ccc794655ff46aaa4d823c66712f, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -97,13 +97,25 @@ MonoBehaviour:
     loop: 1
   - name: Sound track 3
     sound: 2
-    audioClip: {fileID: 8300000, guid: 520d79a02e24d9344823a49b8c4311e9, type: 3}
+    audioClip: {fileID: 8300000, guid: be0d26c6ec7340c42bb57750ebaf5a24, type: 3}
     volume: 0.4
     pitch: 1
     loop: 1
   - name: Sound track 3_1
     sound: 3
     audioClip: {fileID: 8300000, guid: 6b127588bd784014bb8d4171f3e279f9, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 1
+  - name: Sound track 4
+    sound: 4
+    audioClip: {fileID: 8300000, guid: d4b1679a1b729a2409f9784d5c8e9f06, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 1
+  - name: Sound track 5
+    sound: 5
+    audioClip: {fileID: 8300000, guid: ad4457460b43ba040829ee1047a0cd72, type: 3}
     volume: 0.4
     pitch: 1
     loop: 1

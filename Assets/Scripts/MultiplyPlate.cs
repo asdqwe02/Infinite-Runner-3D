@@ -151,8 +151,8 @@ public class MultiplyPlate : MonoBehaviour
         {
             countpl += pe.GetComponent<PlayerEntity>().powerLevel;
         }
-        Debug.Log("total power level from player entity: " + countpl);
-        Debug.Log("total power level from player controller: " + PlayerController.instance.totalPowerLevel);
+        // Debug.Log("total power level from player entity: " + countpl);
+        // Debug.Log("total power level from player controller: " + PlayerController.instance.totalPowerLevel);
 
     }
     public void CalculatePowerLevelForEntity(int calculatedPowerLevel, int currentPowerLevel, int newSpawn)

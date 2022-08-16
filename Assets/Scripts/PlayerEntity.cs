@@ -51,8 +51,17 @@ public class PlayerEntity : Entity
     // Update is called once per frame
     void Update()
     {
-        currentTier = GetTier();
+        // currentTier = GetTier(); // debug only
         LevelManager.instance.CheckBoundary(transform);
+    }
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.CompareTag("Obstacle"))
+        {
+            PlayerController.instance.totalPowerLevel -= powerLevel;
+            PlayerController.instance.UpdatePowerLevel();
+            Kill();
+        }
     }
     private void RotateEntity(object sender, RotateEventArgs rotateInfo)
     {
@@ -94,7 +103,7 @@ public class PlayerEntity : Entity
     {
         flying = false;
         // transform.rotation = Quaternion.identity;
-        if (PlayerController.instance!=null)
+        if (PlayerController.instance != null)
             _default_pos.y = -PlayerController.instance.transform.position.y;
         animator.SetBool("IsFlying", false);
         animator.SetBool("Running", true);
@@ -147,7 +156,7 @@ public class PlayerEntity : Entity
         GameObject bomb = ObjectPooler.instance.GetPooledObject("Explosion");
         if (bomb != null)
         {
-            bomb.GetComponent<Bomb>().SetUp(target, transform, powerLevel,tiers[GetTier()].color);
+            bomb.GetComponent<Bomb>().SetUp(target, transform, powerLevel, tiers[GetTier()].color);
             bomb.SetActive(true);
         }
     }

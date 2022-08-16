@@ -13,6 +13,7 @@ public class SkillSelect : MonoBehaviour
     }
     public void SelectLaserSkill()
     {
+        AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST03);
         PlayerController.instance.SetUpLaserSkill();
         ChangeSkillUI(0);
         skillUI.gameObject.SetActive(true);
@@ -21,6 +22,7 @@ public class SkillSelect : MonoBehaviour
     }
     public void SelectShieldSkill()
     {
+        AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST05);
         PlayerController.instance.SetUpShieldSkill();
         ChangeSkillUI(1);
 
@@ -30,6 +32,7 @@ public class SkillSelect : MonoBehaviour
     }
     public void SelectBombSkill()
     {
+        AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST04);
         PlayerController.instance.SetUpBombSkill();
         ChangeSkillUI(2);
         skillUI.gameObject.SetActive(true);

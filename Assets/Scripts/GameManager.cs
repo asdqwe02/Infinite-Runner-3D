@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     public Transform gameOverScreen;
     public Transform scoreText;
     public Transform gameOverScoreText;
+    [SerializeField] int _screenWidth = 1920, _screenHeight = 1080;
+    public bool fullScreen;
     private void Awake()
     {
         if (instance == null)
@@ -22,18 +24,23 @@ public class GameManager : MonoBehaviour
             return;
         }
         score = 0;
-        scoreText.GetComponent<TextMeshProUGUI>().text = score.ToString();
+        if (scoreText)
+            scoreText.GetComponent<TextMeshProUGUI>().text = score.ToString();
         gameOver = false;
     }
     private void Update()
     {
-        if (PlayerController.instance.totalPowerLevel <= 0 && !gameOver)
+        if (PlayerController.instance)
         {
-            AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST03_1);
-            gameOver = true;
-            gameOverScreen.gameObject.SetActive(true);
-            StartCoroutine(PauseGame(1f));
+            if (PlayerController.instance.totalPowerLevel <= 0 && !gameOver)
+            {
+                AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST03_1);
+                gameOver = true;
+                gameOverScreen.gameObject.SetActive(true);
+                StartCoroutine(PauseGame(1f));
+            }
         }
+
 
     }
     public IEnumerator PauseGame(float slowDuration)
@@ -49,7 +56,7 @@ public class GameManager : MonoBehaviour
     {
         StopAllCoroutines();
         Time.timeScale = 1f;
-        AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST02);
+        // AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST02);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
     }
@@ -65,5 +72,31 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene(0);
         AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST02);
+    }
+    public void SetResolution()
+    {
+        Screen.SetResolution(_screenWidth, _screenHeight, false);
+    }
+    public void ToggleFullScreen()
+    {
+        if (Screen.fullScreen)
+        {
+            Screen.fullScreenMode = FullScreenMode.Windowed;
+            Screen.fullScreen = false;
+        }
+        else
+        {
+            Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+            Screen.fullScreen = true;
+        }
+        // Debug.Log(Screen.fullScreen);
+    }
+    public void SetResWidth(int width)
+    {
+        _screenWidth = width;
+    }
+    public void SetResHeight(int height)
+    {
+        _screenHeight = height;
     }
 }

@@ -70,6 +70,8 @@ public class AudioManager : MonoBehaviour
         ST02,
         ST03,
         ST03_1,
+        ST04,
+        ST05,
         None = -1,
 
     }
