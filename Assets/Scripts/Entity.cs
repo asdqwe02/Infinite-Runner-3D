@@ -15,24 +15,30 @@ public class Entity : MonoBehaviour
     public List<Tier> tiers;
     public EntityTier entityTier;
 
-    protected void Awake() 
+    protected void Awake()
     {
         tiers = new List<Tier>(entityTier.tiers);
         _ogSize = transform.localScale;
     }
     public int GetTier() // this doesn't even work it's stupid as fuck
     {
-        if (powerLevel <=0)
+        if (powerLevel <= 0)
             return 0;
-        for (int i=0 ; i<tiers.Count-1;i++)
+        for (int i = 0; i < tiers.Count - 1; i++)
         {
-            if (  powerLevel >= tiers[i].minPower  && powerLevel<=tiers[i].maxPower)
+            if (powerLevel >= tiers[i].minPower && powerLevel <= tiers[i].maxPower)
                 return i;
         }
-        return tiers.Count-1; // max tier
+        return tiers.Count - 1; // max tier
     }
     public virtual void Kill()
     {
+        powerLevel = 1;
+        ObjectPooler.instance.DeactivatePooledObject(gameObject);
+    }
+    public virtual void Kill(Color color)
+    {
+        ParticleExplode(color);
         powerLevel = 1;
         ObjectPooler.instance.DeactivatePooledObject(gameObject);
     }
@@ -41,39 +47,61 @@ public class Entity : MonoBehaviour
     public virtual void ChangeAppearance()
     {
         float sizeIncrease = GetTier() * entityTier.sizeMultiplier;
-        transform.localScale = _ogSize + new Vector3(sizeIncrease,sizeIncrease,sizeIncrease);
+        transform.localScale = _ogSize + new Vector3(sizeIncrease, sizeIncrease, sizeIncrease);
         if (Renderer.material.color != tiers[GetTier()].color)
         {
             Renderer.material.color = tiers[GetTier()].color;
-            transform.localScale = OGSize + new Vector3(sizeIncrease,sizeIncrease,sizeIncrease);
+            transform.localScale = OGSize + new Vector3(sizeIncrease, sizeIncrease, sizeIncrease);
         }
     }
     public void ParticleExplode()
     {
         var particle = ObjectPooler.instance.GetPooledObject("ParticleBodyExplode");
-        if (particle!=null)
+        if (particle != null)
         {
             particle.transform.parent = null;
             Vector3 pos = transform.position;
-            float offsetY = Renderer.bounds.size.y/2;
+            float offsetY = Renderer.bounds.size.y / 2;
             pos.y = offsetY;
             ParticleSystemRenderer psr = particle.GetComponentInChildren<ParticleSystemRenderer>();
             psr.material.color = tiers[GetTier()].color;
 
             psr.material.EnableKeyword("_EMISSION");
             psr.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
-            psr.material.SetColor("_EmissionColor",tiers[GetTier()].color * 1f);
+            psr.material.SetColor("_EmissionColor", tiers[GetTier()].color * 1f);
 
             particle.transform.position = pos;
             particle.SetActive(true);
             particle.GetComponentInChildren<ParticleSystem>().Play();
-            AudioManager.instance.PlaySound(AudioManager.Sound.Pop,transform.position);
+            AudioManager.instance.PlaySound(AudioManager.Sound.Pop, transform.position);
         }
-       
+
+    }
+    public void ParticleExplode(Color color)
+    {
+        var particle = ObjectPooler.instance.GetPooledObject("ParticleBodyExplode");
+        if (particle != null)
+        {
+            particle.transform.parent = null;
+            Vector3 pos = transform.position;
+            float offsetY = Renderer.bounds.size.y / 2;
+            pos.y = offsetY;
+            ParticleSystemRenderer psr = particle.GetComponentInChildren<ParticleSystemRenderer>();
+            psr.material.color = color;
+
+            psr.material.EnableKeyword("_EMISSION");
+            psr.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
+            psr.material.SetColor("_EmissionColor", color * 1f);
+
+            particle.transform.position = pos;
+            particle.SetActive(true);
+            particle.GetComponentInChildren<ParticleSystem>().Play();
+            AudioManager.instance.PlaySound(AudioManager.Sound.Pop, transform.position);
+        }
     }
     public virtual void TakeDamage(int Damage)
     {
         powerLevel -= Damage;
     }
-    
+
 }

@@ -82,6 +82,12 @@ MonoBehaviour:
     volume: 0.6
     pitch: 1
     loop: 0
+  - name: DVD Player Open 3
+    sound: 6
+    audioClip: {fileID: 8300000, guid: 3899ae319aa4819499100d05d1845dee, type: 3}
+    volume: 0.6
+    pitch: 1
+    loop: 0
   soundTrackArray:
   - name: Sound track 1
     sound: 0

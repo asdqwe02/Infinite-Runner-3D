@@ -29,7 +29,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private float _masterVolumeMultiplier;
     [Range(0f, 1f)]
     [SerializeField] private float _soundTrackVolume;
-    public float MVM
+    public float MVM // master volume multiplier
     {
         get
         {
@@ -42,7 +42,7 @@ public class AudioManager : MonoBehaviour
 
         }
     }
-    public float STV
+    public float STV // sound track volume
     {
         get
         {
@@ -63,6 +63,7 @@ public class AudioManager : MonoBehaviour
         LaserBeam,
         Shield,
         ButtonClick,
+        DVDOpen,
     }
     public enum SoundTrack
     {
@@ -122,11 +123,9 @@ public class AudioManager : MonoBehaviour
     }
     void Start()
     {
-
-        // AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.GameOverST); test 
-
-        //play main theme or music here
-        //Play("Theme");
+        // can play main theme or music here
+        // Play("Theme");
+        LoadAudioSetting();
     }
 
     //Spacial Sound 
@@ -158,13 +157,13 @@ public class AudioManager : MonoBehaviour
         {
             if (oneShotGameObject == null)
             {
-                oneShotGameObject = new GameObject("One Shot Sound ");
+                oneShotGameObject = new GameObject();
                 oneShotAudioSource = oneShotGameObject.AddComponent<AudioSource>();
             }
             //GameObject soundGameObject = new GameObject("Sound");
             //AudioSource audioSource = soundGameObject.AddComponent<AudioSource>();
             SoundAudioClip<Sound> s = System.Array.Find(soundAudiosClipArray, Sound => Sound.sound == sound);
-            oneShotGameObject.name += s.name;
+            oneShotGameObject.name = "Oneshot sound " + s.name;
             oneShotAudioSource.loop = s.loop;
             oneShotAudioSource.volume = s.volume * MVM;
             oneShotAudioSource.pitch = s.pitch;
@@ -269,6 +268,14 @@ public class AudioManager : MonoBehaviour
         if (soundTrackGameObject != null)
         {
             soundTrackAudioSource.volume = STV * MVM; // redundant
+        }
+    }
+    public void LoadAudioSetting()
+    {
+        if (GameManager.instance.settingData!=null)
+        {
+            MVM = GameManager.instance.settingData.masterVolume;
+            STV = GameManager.instance.settingData.musicVolume;
         }
     }
 }

@@ -81,19 +81,20 @@ public class LaserController : MonoBehaviour
     {
         while (gameObject.activeSelf)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.25f);
             if (target != null && target.gameObject.activeSelf)
             {
-                EnemyEntity entity = target.GetComponent<EnemyEntity>();
-                entity.TakeDamage(_damage);
-                Debug.Log("deal laser damage ");
-                if (entity.powerLevel <= 0)
+                EnemyEntity enemyEntity = target.GetComponent<EnemyEntity>();
+                enemyEntity.TakeDamage(_damage);
+                // Debug.Log("deal laser damage ");
+                if (enemyEntity.powerLevel <= 0)
                 {
-                    entity.powerLevel = 1; /// dumb fix to a small visual bug
+                    enemyEntity.powerLevel = 1; /// dumb fix to a small visual bug
                     targetList.Remove(target);
                     target = null;
-                    entity.Kill();
+                    enemyEntity.Kill();
                 }
+                // else enemyEntity.ChangeAppearance();
             }
         }
     }

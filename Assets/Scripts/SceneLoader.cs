@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
-public class LevelLoader : MonoBehaviour
+public class SceneLoader : MonoBehaviour
 {
     public GameObject loadingScreen;
     Slider progressSlider;
@@ -39,7 +39,7 @@ public class LevelLoader : MonoBehaviour
 
                 progressText.text = "99%";
                 progressSlider.value = .99f;
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(0.75f);
                 operation.allowSceneActivation = true; 
             }
             yield return null;

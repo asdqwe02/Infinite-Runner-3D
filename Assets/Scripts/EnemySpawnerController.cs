@@ -67,12 +67,12 @@ public class EnemySpawnerController : MonoBehaviour
                 {
                     randomPos = new Vector3(Random.Range(-offsetX, offsetX), 0, Random.Range(-offsetZ, offsetZ));
                 }
-                GameObject ee = ObjectPooler.instance.GetPooledObject("EnemyEntity");
-                if (ee != null)
+                GameObject enemyEntity = ObjectPooler.instance.GetPooledObject("EnemyEntity");
+                if (enemyEntity != null)
                 {
-                    ee.transform.position = randomPos;
-                    ee.SetActive(true);
-                    enemyEntityList.Add(ee.GetComponent<EnemyEntity>());
+                    enemyEntity.transform.position = randomPos;
+                    enemyEntity.SetActive(true);
+                    enemyEntityList.Add(enemyEntity.GetComponent<EnemyEntity>());
                 }
             }
             DistributePowerLevel();

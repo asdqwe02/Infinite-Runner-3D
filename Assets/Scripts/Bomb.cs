@@ -65,15 +65,18 @@ public class Bomb : MonoBehaviour
     private void Explode()
     {
         // Deal damage
-        foreach (EnemyEntity ee in enemyEntities)
+        foreach (EnemyEntity enemyEntity in enemyEntities)
         {
-            if (ee.gameObject.activeSelf)
+            if (enemyEntity.gameObject.activeSelf)
             {
-                ee.TakeDamage(damage);
-                if (ee.powerLevel <= 0)
+                Color color = enemyEntity.tiers[enemyEntity.GetTier()].color;
+                enemyEntity.TakeDamage(damage);
+                if (enemyEntity.powerLevel <= 0)
                 {
-                    ee.Kill();
+                    enemyEntity.Kill(color);
+    
                 }
+                // else enemyEntity.ChangeAppearance();
             }
         }
 

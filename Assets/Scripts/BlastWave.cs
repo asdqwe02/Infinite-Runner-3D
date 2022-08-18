@@ -44,6 +44,5 @@ public class BlastWave : MonoBehaviour
             lineRenderer.SetPosition(i,pos); 
         }
         lineRenderer.widthMultiplier = Mathf.Lerp(0f,startWidth, 1f - currentRadius/maxRadius);
-
     }
 }

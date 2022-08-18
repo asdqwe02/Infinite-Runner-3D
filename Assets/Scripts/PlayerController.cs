@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        totalPowerLevel=1;
+        totalPowerLevel = 1;
         _turnState = TurningState.forward;
         entityRotatedSideway = false;
         entitySpawnPositions = new List<EntitySpawnPosition>();
@@ -142,6 +142,16 @@ public class PlayerController : MonoBehaviour
     public void UpdatePowerLevel()
     {
         plText.text = totalPowerLevel.ToString();
+
+        // debugging
+        // int countpl = 0;
+        // foreach (var pe in ObjectPooler.instance.GetActivePoolObjects("PlayerEntity"))
+        // {
+        //     countpl += pe.GetComponent<PlayerEntity>().powerLevel;
+        // }
+        // Debug.Log("total power level from player entity: " + countpl);
+        // Debug.Log("total power level from player controller: " + PlayerController.instance.totalPowerLevel);
+
     }
     public void RemoveEntityFromFormation(Transform entity)
     {
@@ -236,7 +246,7 @@ public class PlayerController : MonoBehaviour
         Transform currentLevel = LevelManager.instance.GetCurrentLevel();
         List<EnemyEntity> targetedEnemy = new List<EnemyEntity>(
             GetChildGameObjectWithScript<EnemyEntity>(currentLevel.GetComponentInChildren<EnemySpawnerController>().transform)); // WTF... AGAIN
-        Debug.Log(targetedEnemy);
+        // Debug.Log(targetedEnemy);
 
         foreach (var entity in poeList)
         {

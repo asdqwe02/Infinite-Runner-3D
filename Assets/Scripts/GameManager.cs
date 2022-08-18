@@ -4,16 +4,20 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using System;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public bool gameOver = false;
     public uint score;
     public Transform gameOverScreen;
+    public Transform pauseScreen;
     public Transform scoreText;
     public Transform gameOverScoreText;
-    [SerializeField] int _screenWidth = 1920, _screenHeight = 1080;
+    public int screenWidth = 1920, screenHeight = 1080;
     public bool fullScreen;
+    public SettingData settingData;
+    public Action TogglePause;
     private void Awake()
     {
         if (instance == null)
@@ -27,6 +31,8 @@ public class GameManager : MonoBehaviour
         if (scoreText)
             scoreText.GetComponent<TextMeshProUGUI>().text = score.ToString();
         gameOver = false;
+        TogglePause = PauseGame;
+        LoadSettingData();
     }
     private void Update()
     {
@@ -40,7 +46,10 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(PauseGame(1f));
             }
         }
-
+        if (Input.GetKeyDown(KeyCode.Escape) && pauseScreen!=null)
+        {
+            TogglePause();
+        }
 
     }
     public IEnumerator PauseGame(float slowDuration)
@@ -52,10 +61,23 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(slowDuration);
         Time.timeScale = 0;
     }
+    public void PauseGame()
+    {
+        Time.timeScale = 0f;
+        pauseScreen.gameObject.SetActive(true);
+        TogglePause = UnpauseGame;
+    }
+    public void UnpauseGame()
+    {
+        Time.timeScale = 1f;
+        pauseScreen.gameObject.SetActive(false);
+        TogglePause = PauseGame;
+    }
     public void RestartGame()
     {
         StopAllCoroutines();
         Time.timeScale = 1f;
+        AudioManager.instance.PlaySound(AudioManager.Sound.ButtonClick);
         // AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST02);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
@@ -70,12 +92,13 @@ public class GameManager : MonoBehaviour
     {
         StopAllCoroutines();
         Time.timeScale = 1f;
+        AudioManager.instance.PlaySound(AudioManager.Sound.ButtonClick);
         SceneManager.LoadScene(0);
         AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST02);
     }
     public void SetResolution()
     {
-        Screen.SetResolution(_screenWidth, _screenHeight, false);
+        Screen.SetResolution(screenWidth, screenHeight, fullScreen);
     }
     public void ToggleFullScreen()
     {
@@ -89,14 +112,30 @@ public class GameManager : MonoBehaviour
             Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
             Screen.fullScreen = true;
         }
+        fullScreen = Screen.fullScreen;
         // Debug.Log(Screen.fullScreen);
     }
     public void SetResWidth(int width)
     {
-        _screenWidth = width;
+        screenWidth = width;
     }
     public void SetResHeight(int height)
     {
-        _screenHeight = height;
+        screenHeight = height;
+    }
+    public void LoadSettingData()
+    {
+        settingData = SaveSystem.LoadSettingData();
+        if (settingData != null)
+        {
+            screenHeight = settingData.screenHeight;
+            screenWidth = settingData.screenWidth;
+            fullScreen = settingData.fullScreen;
+            SetResolution();
+        }
+    }
+    public void SaveSettingData()
+    {
+        SaveSystem.SaveSetting(AudioManager.instance, GameManager.instance);
     }
 }

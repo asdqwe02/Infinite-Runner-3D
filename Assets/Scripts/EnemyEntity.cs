@@ -8,12 +8,10 @@ public class EnemyEntity : Entity
     public Transform target;
     public float speed;
     private Animator animator;
-    public bool hit; // could be useless
     protected void Awake()
     {
         base.Awake();
         animator = GetComponent<Animator>();
-        hit = false;
     }
     void FixedUpdate()
     {
@@ -27,27 +25,7 @@ public class EnemyEntity : Entity
             transform.Translate(direction * speed * Time.deltaTime, Space.World);
         }
     }
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.transform.CompareTag("PlayerEntity") && !hit)
-        {
-            hit = true;
-            PlayerEntity pe = other.collider.GetComponent<PlayerEntity>();
-            pe.TakeDamage(powerLevel);
-            if (pe.powerLevel <= 0)
-            {
-
-                target = null;
-                pe.Kill();
-            }
-            else
-            {
-                pe.ChangeAppearance();
-            }
-            PlayerController.instance.UpdatePowerLevel();
-            Kill();
-        }
-    }
+  
     public override void Kill()
     {
         if (target != null)
@@ -56,18 +34,27 @@ public class EnemyEntity : Entity
         ParticleExplode();
         base.Kill();
     }
+    public override void Kill(Color color) 
+    {
+        if (target != null)
+            target = null;
+        GameManager.instance.AddScore(10);
+        base.Kill(color);
+    }
     private void OnEnable()
     {
-        hit = false;
         target = null;
         animator.SetBool("Running", false);
 
     }
     public void SetTarget()
     {
-        List<EntitySpawnPosition> playerEntityPos = GetSpawnPositionWithEntity(PlayerController.instance.entitySpawnPositions);
-        target = playerEntityPos[Random.Range(0, playerEntityPos.Count - 1)].entity;
-        animator.SetBool("Running", true);
+        if (PlayerController.instance.totalPowerLevel >= 1)
+        {
+            List<EntitySpawnPosition> playerEntityPos = GetSpawnPositionWithEntity(PlayerController.instance.entitySpawnPositions);
+            target = playerEntityPos[Random.Range(0, playerEntityPos.Count - 1)].entity;
+            animator.SetBool("Running", true);
+        }
     }
     public override void ChangeAppearance()
     {

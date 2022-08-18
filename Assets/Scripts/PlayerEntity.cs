@@ -22,11 +22,13 @@ public class PlayerEntity : Entity
     [SerializeField] private int _shield;
     bool enableShield;
 
+    private bool _hit;
     // is this even necessary ?
     protected void Awake()
     {
         base.Awake();
         animator = GetComponent<Animator>();
+        _hit = false;
 
     }
     void Start()
@@ -46,6 +48,7 @@ public class PlayerEntity : Entity
     private void OnEnable()
     {
         _default_pos = transform.localPosition;
+        _hit = false;
         BackToGround();
     }
     // Update is called once per frame
@@ -56,12 +59,38 @@ public class PlayerEntity : Entity
     }
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Obstacle"))
+        if (!_hit)
         {
-            PlayerController.instance.totalPowerLevel -= powerLevel;
-            PlayerController.instance.UpdatePowerLevel();
-            Kill();
+            if (other.gameObject.CompareTag("Obstacle") && !enableShield)
+            {
+                PlayerController.instance.totalPowerLevel -= powerLevel;
+                PlayerController.instance.UpdatePowerLevel();
+                ParticleExplode();
+                Kill();
+                return;
+            }
+            if (other.gameObject.CompareTag("EnemyEntity"))
+            {
+                _hit = true;
+                var enemyEntity = other.gameObject.GetComponent<EnemyEntity>();
+                Color color = tiers[GetTier()].color;
+                TakeDamage(enemyEntity.powerLevel);
+                enemyEntity.Kill();
+                if (powerLevel <= 0)
+                {
+                    ParticleExplode(color);
+                    Kill();
+                }
+                else
+                    ChangeAppearance();
+                PlayerController.instance.UpdatePowerLevel();
+            }
         }
+
+    }
+    private void OnCollisionExit(Collision other)
+    {
+        _hit = false;
     }
     private void RotateEntity(object sender, RotateEventArgs rotateInfo)
     {
@@ -108,10 +137,11 @@ public class PlayerEntity : Entity
         animator.SetBool("IsFlying", false);
         animator.SetBool("Running", true);
     }
-    private void OnDisable()
-    {
-        BackToGround();
-    }
+    // private void OnDisable()
+    // {
+    //     _hit = false;
+    //     BackToGround();
+    // }
     public override void ChangeAppearance()
     {
         base.ChangeAppearance();

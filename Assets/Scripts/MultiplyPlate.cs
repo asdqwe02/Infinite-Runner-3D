@@ -127,8 +127,7 @@ public class MultiplyPlate : MonoBehaviour
     public void Activate()
     {
         int calculatedPowerLevel = CalculatePowerLevel();
-        LevelManager.instance.counter++;
-        LevelManager.instance.levelPassed++;
+        // LevelManager.instance.counter++;
         int EntitySpawned = 0;
         if (PlayerController.instance.totalPowerLevel < calculatedPowerLevel)
         {
@@ -144,16 +143,6 @@ public class MultiplyPlate : MonoBehaviour
 
         PlayerController.instance.totalPowerLevel = calculatedPowerLevel;
         PlayerController.instance.UpdatePowerLevel();
-
-        // debugging
-        int countpl = 0;
-        foreach (var pe in ObjectPooler.instance.GetActivePoolObjects("PlayerEntity"))
-        {
-            countpl += pe.GetComponent<PlayerEntity>().powerLevel;
-        }
-        // Debug.Log("total power level from player entity: " + countpl);
-        // Debug.Log("total power level from player controller: " + PlayerController.instance.totalPowerLevel);
-
     }
     public void CalculatePowerLevelForEntity(int calculatedPowerLevel, int currentPowerLevel, int newSpawn)
     {

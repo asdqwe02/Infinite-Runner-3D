@@ -1824,6 +1824,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 2100195326}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: SaveSettingData
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &415407852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6242,9 +6254,15 @@ MonoBehaviour:
   gameOverScreen: {fileID: 0}
   scoreText: {fileID: 0}
   gameOverScoreText: {fileID: 0}
-  _screenWidth: 1920
-  _screenHeight: 1080
+  screenWidth: 1920
+  screenHeight: 1080
   fullScreen: 1
+  settingData:
+    masterVolume: 0
+    musicVolume: 0
+    screenWidth: 0
+    screenHeight: 0
+    fullScreen: 0
 --- !u!1 &2108472793
 GameObject:
   m_ObjectHideFlags: 0

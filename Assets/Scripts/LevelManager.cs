@@ -11,15 +11,22 @@ public class LevelManager : MonoBehaviour
         public List<GameObject> obstacleList;
     }
     public List<Level> levelList;
-    private float _offsetZ, _offsetX;
-    public int counter;
+
+
+
     public int levelPassed; // use this to calculate point and maybe spawn obstacle
-    public int nextLevelToGenerate;
-    public int lastLevel;
+    public int nextLevelIndex;
+    public int lastLevelIndex;
     public static LevelManager instance;
     public float boundaryValue;
-    // Start is called before the first frame update
     public float speed;
+    public int levelToSpawnObstacle;
+
+    [Header("Offsets values")]
+    [SerializeField] private float _offsetZWorld;
+    [SerializeField] private float _offsetX;
+    [SerializeField] private float _offsetZ;
+    [SerializeField] private float _offsetFromPlate;
     void Awake()
     {
         if (instance == null)
@@ -30,11 +37,14 @@ public class LevelManager : MonoBehaviour
             return;
         }
         boundaryValue = levelList[0].ground.GetComponent<Renderer>().bounds.size.x / 2;
-        counter = 0;
-        _offsetZ = levelList[0].ground.GetComponent<Renderer>().bounds.size.z;
-        _offsetX = levelList[0].ground.GetComponent<Renderer>().bounds.size.x;
-        nextLevelToGenerate = 0;
-        lastLevel = levelList.Count - 1;
+        var mesh = levelList[0].ground.GetComponent<MeshFilter>().mesh;
+        _offsetZWorld = levelList[0].ground.GetComponent<Renderer>().bounds.size.z;
+
+        _offsetX = mesh.bounds.size.x;
+        _offsetZ = mesh.bounds.size.z;
+        _offsetFromPlate = _offsetZ / 5f;
+        nextLevelIndex = 0;
+        lastLevelIndex = levelList.Count - 1;
     }
     private void Start()
     {
@@ -51,34 +61,45 @@ public class LevelManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // kinda bad
-        if (counter >= 2)
+
+    }
+    public void GenerateLevel()
+    {
+        if (levelPassed >= 1)
         {
-            counter = 1;
-            // level[nextLevelToGenerate].position = new Vector3(0,0,offsetZ*(levelPassed+2));
-            levelList[nextLevelToGenerate].ground.position = new Vector3(0, 0, _offsetZ + levelList[lastLevel].ground.position.z);
+            DespawnObstacle(levelList[nextLevelIndex]);
+            levelList[nextLevelIndex].ground.position = new Vector3(0, 0, _offsetZWorld + levelList[lastLevelIndex].ground.position.z);
 
-            DespawnObstacle(levelList[nextLevelToGenerate]);
 
-            foreach (MultiplyPlate mp in levelList[nextLevelToGenerate].ground.GetComponentsInChildren<MultiplyPlate>())
+            foreach (MultiplyPlate mp in levelList[nextLevelIndex].ground.GetComponentsInChildren<MultiplyPlate>())
             {
                 mp.RollMultiplyPlate();
             }
 
+
             // calculate next level to generate
-            lastLevel = nextLevelToGenerate;
-            nextLevelToGenerate++;
-            if (nextLevelToGenerate > levelList.Count - 1)
-                nextLevelToGenerate = 0;
+            lastLevelIndex = nextLevelIndex;
+            nextLevelIndex++;
+            if (nextLevelIndex > levelList.Count - 1)
+                nextLevelIndex = 0;
 
-            if (levelPassed >= 2)
+
+            if (levelPassed >= levelToSpawnObstacle)
             {
-                SpawnObstacles(levelList[nextLevelToGenerate], 3, false);
-                if (nextLevelToGenerate == levelList.Count - 1)
-                    SpawnObstacles(levelList[0], 3, true);
-                else
-                    SpawnObstacles(levelList[nextLevelToGenerate + 1], 3, true);
 
+                if (nextLevelIndex + 1 > levelList.Count - 1)
+                {
+                    // Debug.Log("spawn obstacle in level index: " + 0);
+                    SpawnObstacles(levelList[0], 2, true);
+                    SpawnObstacles(levelList[0], 2, false);
+
+                }
+                else
+                {
+                    // Debug.Log("spawn obstacle in level index: " + (nextLevelToGenerate + 1));
+                    SpawnObstacles(levelList[nextLevelIndex + 1], 2, true);
+                    SpawnObstacles(levelList[nextLevelIndex + 1], 2, false);
+                }
             }
         }
     }
@@ -105,7 +126,7 @@ public class LevelManager : MonoBehaviour
     }
     public Transform GetCurrentLevel()
     {
-        return levelList[nextLevelToGenerate].ground;
+        return levelList[nextLevelIndex].ground;
     }
     public void SpawnObstacles(Level level, int amount, bool beforePlate)
     {
@@ -113,13 +134,13 @@ public class LevelManager : MonoBehaviour
         float minOffsetZ, maxOffsetZ;
         if (beforePlate)
         {
-            minOffsetZ = -_offsetZ / 2;
+            minOffsetZ = (-_offsetZ / 2) - _offsetFromPlate;
             maxOffsetZ = 0;
         }
         else
         {
             minOffsetZ = 0;
-            maxOffsetZ = _offsetZ / 2;
+            maxOffsetZ = (_offsetZ / 2) + _offsetFromPlate;
         }
         for (int i = 0; i < amount; i++)
         {
@@ -130,7 +151,7 @@ public class LevelManager : MonoBehaviour
                 spawnPos = GetObstacleSpawnPosition(_offsetX / 2, minOffsetZ, maxOffsetZ);
                 while (spawnPosList.Contains(spawnPos))
                 {
-                    spawnPos = GetObstacleSpawnPosition(_offsetX / 2, -_offsetZ / 2, 0);
+                    spawnPos = GetObstacleSpawnPosition(_offsetX / 2, minOffsetZ, maxOffsetZ);
                 }
                 // base scale and position on ground
                 // Vector3 scale = obstacle.transform.localScale;
@@ -138,7 +159,7 @@ public class LevelManager : MonoBehaviour
 
                 obstacle.transform.parent = level.ground;
                 // obstacle.transform.localScale = scale;
-                obstacle.transform.position = spawnPos;
+                obstacle.transform.localPosition = spawnPos; // using global position because Renderer.bound.size get the global size instead of local
                 obstacle.SetActive(true);
                 level.obstacleList.Add(obstacle);
             }
@@ -153,7 +174,7 @@ public class LevelManager : MonoBehaviour
             float yPos = obstacle.transform.localPosition.y;
 
             obstacle.transform.parent = ObjectPooler.instance.transform;
-            obstacle.transform.localPosition = new Vector3(0,yPos,0);
+            obstacle.transform.localPosition = new Vector3(0, yPos, 0);
             obstacle.SetActive(false);
 
         }
