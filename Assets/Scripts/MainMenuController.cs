@@ -4,18 +4,12 @@ using UnityEngine;
 
 public class MainMenuController : MonoBehaviour
 {
-    [SerializeField] Transform mainMenu;
-    [SerializeField] Transform optionMenu;
+    // [SerializeField] Transform mainMenu;
+    // [SerializeField] Transform optionMenu;
+    // [SerializeField] Transform helpMenu;
     [SerializeField] Transform pressAnyKeyText;
 
-    List<Transform> menus;
-    private void Awake()
-    {
-        menus = new List<Transform>(){
-            mainMenu,
-            optionMenu,
-        };
-    }
+    [SerializeField] List<Transform> menus;
     public void ShowMenu(int index)
     {
         AudioManager.instance.PlaySound(AudioManager.Sound.ButtonClick);
@@ -26,15 +20,11 @@ public class MainMenuController : MonoBehaviour
         AudioManager.instance.PlaySound(AudioManager.Sound.ButtonClick);
         menus[index].gameObject.SetActive(false);
     }
-    public void ShowPressAnyKeyText()
-    {
-        
-    }
     private void Update() {
-        if (Input.anyKey && !mainMenu.gameObject.activeSelf)
+        if (Input.anyKey && !menus[0].gameObject.activeSelf)
         {
             pressAnyKeyText.gameObject.SetActive(false);
-            mainMenu.gameObject.SetActive(true);
+            menus[0].gameObject.SetActive(true);
         }
 
     }

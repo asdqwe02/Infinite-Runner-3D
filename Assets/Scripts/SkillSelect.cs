@@ -13,7 +13,7 @@ public class SkillSelect : MonoBehaviour
     }
     public void SelectLaserSkill()
     {
-        AudioManager.instance.PlaySound(AudioManager.Sound.DVDOpen);
+        AudioManager.instance.PlaySound(AudioManager.Sound.DVDOpen, Vector3.zero);
         AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST03);
         PlayerController.instance.SetUpLaserSkill();
         ChangeSkillUI(0);
@@ -23,7 +23,7 @@ public class SkillSelect : MonoBehaviour
     }
     public void SelectShieldSkill()
     {
-        AudioManager.instance.PlaySound(AudioManager.Sound.DVDOpen);
+        AudioManager.instance.PlaySound(AudioManager.Sound.DVDOpen, Vector3.zero);
         AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST05);
         PlayerController.instance.SetUpShieldSkill();
         ChangeSkillUI(1);
@@ -34,7 +34,7 @@ public class SkillSelect : MonoBehaviour
     }
     public void SelectBombSkill()
     {
-        AudioManager.instance.PlaySound(AudioManager.Sound.DVDOpen);
+        AudioManager.instance.PlaySound(AudioManager.Sound.DVDOpen, Vector3.zero);
         AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST04);
         PlayerController.instance.SetUpBombSkill();
         ChangeSkillUI(2);

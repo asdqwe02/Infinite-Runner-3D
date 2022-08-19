@@ -12,12 +12,14 @@ public class GameManager : MonoBehaviour
     public uint score;
     public Transform gameOverScreen;
     public Transform pauseScreen;
+    public Transform skillSelectScreen;
     public Transform scoreText;
     public Transform gameOverScoreText;
     public int screenWidth = 1920, screenHeight = 1080;
     public bool fullScreen;
+    public bool pause;
     public SettingData settingData;
-    public Action TogglePause;
+    private Material _pauseScreenMaterial;
     private void Awake()
     {
         if (instance == null)
@@ -31,7 +33,8 @@ public class GameManager : MonoBehaviour
         if (scoreText)
             scoreText.GetComponent<TextMeshProUGUI>().text = score.ToString();
         gameOver = false;
-        TogglePause = PauseGame;
+        if (pauseScreen)
+            _pauseScreenMaterial = pauseScreen.GetComponent<Image>().material;
         LoadSettingData();
     }
     private void Update()
@@ -46,10 +49,15 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(PauseGame(1f));
             }
         }
-        if (Input.GetKeyDown(KeyCode.Escape) && pauseScreen!=null)
+        if ((Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
+            && pauseScreen != null
+            && !gameOverScreen.gameObject.activeSelf
+            && !skillSelectScreen.gameObject.activeSelf) // maybe change these to something more useful
         {
             TogglePause();
         }
+        if (pause) // do this to have the pause screen shader effect
+            _pauseScreenMaterial.SetFloat("_UnscaledTime",Time.unscaledTime);
 
     }
     public IEnumerator PauseGame(float slowDuration)
@@ -61,17 +69,15 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(slowDuration);
         Time.timeScale = 0;
     }
-    public void PauseGame()
+    public void TogglePause()
     {
-        Time.timeScale = 0f;
-        pauseScreen.gameObject.SetActive(true);
-        TogglePause = UnpauseGame;
-    }
-    public void UnpauseGame()
-    {
-        Time.timeScale = 1f;
-        pauseScreen.gameObject.SetActive(false);
-        TogglePause = PauseGame;
+        Time.timeScale = Mathf.Abs(Time.timeScale - 1f);
+        pause = !pause;
+        pauseScreen.gameObject.SetActive(!pauseScreen.gameObject.activeSelf);
+        if (pauseScreen.gameObject.activeSelf)
+            AudioManager.instance.PauseAllSound();
+        else AudioManager.instance.ResumeAllSound();
+
     }
     public void RestartGame()
     {

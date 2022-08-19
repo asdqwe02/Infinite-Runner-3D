@@ -54,8 +54,8 @@ public class LevelManager : MonoBehaviour
             levelList[i + 1].ground.GetComponentInChildren<PlateController>().previousEnemySpannwer = levelList[i].ground.GetComponentInChildren<EnemySpawnerController>();
         }
         levelList[levelList.Count - 1].ground.GetComponentInChildren<PlateController>().nextEnemySpannwer = levelList[0].ground.GetComponentInChildren<EnemySpawnerController>();
+        
         levelList[0].ground.GetComponentInChildren<PlateController>().previousEnemySpannwer = levelList[levelList.Count - 1].ground.GetComponentInChildren<EnemySpawnerController>();
-
         levelList[0].ground.GetComponentInChildren<PlateController>().currentEnenmySpawner.SpawnEnemyEntity(); // ... doesn't work ???? wtf
     }
     // Update is called once per frame

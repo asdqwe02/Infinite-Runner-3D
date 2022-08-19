@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using static Utility;
+using TMPro;
 public class RotateEventArgs : EventArgs
 {
     public float angle { get; set; }
@@ -27,7 +28,7 @@ public class PlayerController : MonoBehaviour
     public List<EntitySpawnPosition> entitySpawnPositions;
     public int totalPowerLevel;
     public int maxUnit;
-    private TextMesh plText;
+    private TextMeshPro powerLevelText;
     public List<PlayerEntity> flyingEntity;
     public float laserSkillTime, shieldSkillTime, skillCDTime, skillCDTimeTotal;
     public bool skillCD;
@@ -55,7 +56,7 @@ public class PlayerController : MonoBehaviour
         entityRotatedSideway = false;
         entitySpawnPositions = new List<EntitySpawnPosition>();
         flyingEntity = new List<PlayerEntity>();
-        plText = GetComponentInChildren<TextMesh>();
+        powerLevelText = GetComponentInChildren<TextMeshPro>();
     }
     private void Start()
     {
@@ -141,7 +142,7 @@ public class PlayerController : MonoBehaviour
     }
     public void UpdatePowerLevel()
     {
-        plText.text = totalPowerLevel.ToString();
+        powerLevelText.text = totalPowerLevel.ToString();
 
         // debugging
         // int countpl = 0;
@@ -206,7 +207,7 @@ public class PlayerController : MonoBehaviour
             }
             GameObject laserSound = AudioManager.instance.PlaySound(AudioManager.Sound.LaserBeam);
             yield return new WaitForSeconds(laserSkillTime);
-            Destroy(laserSound);
+            StartCoroutine(AudioManager.instance.DisableSoundObject(laserSound, 0f));
             // return flying entity to normal running state
             foreach (var entity in flyingEntity)
             {

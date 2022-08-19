@@ -10,7 +10,7 @@ public class PlayerEntity : Entity
     public float catchUpSpeed;
     private Animator animator;
     [SerializeField] private Vector3 _default_pos;
-    public int currentTier; // for debugging only
+    // public int currentTier; // for debugging only
     public Transform laserTarget;
     public Transform laserPoint;
 
@@ -23,7 +23,6 @@ public class PlayerEntity : Entity
     bool enableShield;
 
     private bool _hit;
-    // is this even necessary ?
     protected void Awake()
     {
         base.Awake();
@@ -137,11 +136,6 @@ public class PlayerEntity : Entity
         animator.SetBool("IsFlying", false);
         animator.SetBool("Running", true);
     }
-    // private void OnDisable()
-    // {
-    //     _hit = false;
-    //     BackToGround();
-    // }
     public override void ChangeAppearance()
     {
         base.ChangeAppearance();
@@ -189,5 +183,13 @@ public class PlayerEntity : Entity
             bomb.GetComponent<Bomb>().SetUp(target, transform, powerLevel, tiers[GetTier()].color);
             bomb.SetActive(true);
         }
+    }
+    public void PauseAllSound()
+    {
+
+    }
+    public void ResumeAllSound()
+    {
+        
     }
 }
