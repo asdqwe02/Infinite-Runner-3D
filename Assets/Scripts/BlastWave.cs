@@ -14,6 +14,8 @@ public class BlastWave : MonoBehaviour
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.positionCount = pointsCount +1; 
     }
+
+    // Draw explosion blast using line renderer
     private IEnumerator Blast()
     {
         float currentRadius = 0f;

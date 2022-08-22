@@ -10,8 +10,8 @@ public class SettingData
 
     public SettingData(AudioManager audioManager, GameManager gameManager)
     {
-        masterVolume = audioManager.MVM;
-        musicVolume = audioManager.STV;
+        masterVolume = audioManager.MasterVolume;
+        musicVolume = audioManager.SountrackVolume;
         screenWidth = gameManager.screenWidth;
         screenHeight = gameManager.screenHeight;
         fullScreen = gameManager.fullScreen;

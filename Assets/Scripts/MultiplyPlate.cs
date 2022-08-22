@@ -9,7 +9,7 @@ public class MultiplyPlate : MonoBehaviour
 {
     // Start is called before the first frame update
     public int number;
-    public TextMeshPro tm;
+    public TextMeshPro textMesh;
     public enum Expression
     {
         PLUS,
@@ -21,7 +21,7 @@ public class MultiplyPlate : MonoBehaviour
     public bool trigger;
     void Start()
     {
-        tm = GetComponentInChildren<TextMeshPro>();
+        textMesh = GetComponentInChildren<TextMeshPro>();
         RollMultiplyPlate();
         trigger = false;
     }
@@ -40,16 +40,16 @@ public class MultiplyPlate : MonoBehaviour
         switch (expression)
         {
             case Expression.PLUS:
-                tm.text = "X+" + number;
+                textMesh.text = "X+" + number;
                 break;
             case Expression.MINUS:
-                tm.text = "X-" + number;
+                textMesh.text = "X-" + number;
                 break;
             case Expression.MULTIPLY:
-                tm.text = "X*" + number;
+                textMesh.text = "X*" + number;
                 break;
             case Expression.DIVIDE:
-                tm.text = "X/" + number;
+                textMesh.text = "X/" + number;
                 break;
             default:
                 Debug.Log("Error in multiply plate");
@@ -76,12 +76,11 @@ public class MultiplyPlate : MonoBehaviour
         }
         return 0; // => bug if got this
     }
-    public int SpawnPlayerEntity(int calculatedPowerLevel) //small bug not spawning all the entity  | fixed
+    public int SpawnPlayerEntity(int amount) 
     {
-        int currentPowerLevel = PlayerController.instance.totalPowerLevel;
-        int activePlayerEntity = ObjectPooler.instance.ActivePooledObjectCount("PlayerEntity");
+        // int currentPowerLevel = PlayerController.instance.totalPowerLevel;
         int EntitySpawned = 0;
-        for (int i = 0; i < calculatedPowerLevel - currentPowerLevel; i++) // check this condition again | fixed
+        for (int i = 0; i < amount; i++) 
         {
             GameObject playerEntity = ObjectPooler.instance.GetPooledObject("PlayerEntity");
             EntitySpawnPosition entitySpawnPos = PlayerController.instance.GetEntitySpawnPosition();
@@ -102,43 +101,14 @@ public class MultiplyPlate : MonoBehaviour
         }
         return EntitySpawned;
     }
-    public void SplitPlayerEntity(int calculatedPowerLevel, int activePlayerEntity) // despawn need more refine and tinkering
-    {
-        PlayerController.instance.RemoveAllEntity();
-        for (int i = 0; i < calculatedPowerLevel; i++)
-        {
-            GameObject playerEntity = ObjectPooler.instance.GetPooledObject("PlayerEntity");
-            EntitySpawnPosition entitySpawnPos = PlayerController.instance.GetEntitySpawnPosition();
-            if (playerEntity != null && entitySpawnPos != null)
-            {
-                Vector3 pos = entitySpawnPos.position;
-                pos.y = playerEntity.transform.localPosition.y;
-
-                playerEntity.transform.parent = PlayerController.instance.formation;
-                playerEntity.transform.localPosition = pos; // keep local pos y 
-
-                entitySpawnPos.entity = playerEntity.transform;
-                playerEntity.SetActive(true);
-                playerEntity.GetComponent<PlayerEntity>().ChangeAppearance();
-            }
-        }
-    }
-
     public void Activate()
     {
         int calculatedPowerLevel = CalculatePowerLevel();
-        // LevelManager.instance.counter++;
         int EntitySpawned = 0;
         if (PlayerController.instance.totalPowerLevel < calculatedPowerLevel)
         {
-            EntitySpawned = SpawnPlayerEntity(calculatedPowerLevel);
+            EntitySpawned = SpawnPlayerEntity(calculatedPowerLevel - PlayerController.instance.totalPowerLevel);
         }
-        // if (calculatedPowerLevel < PlayerController.instance.maxUnit
-        //     && calculatedPowerLevel < PlayerController.instance.totalPowerLevel) // look at this again this cause bug
-        // {
-        //     // Debug.Log("despawn player entity");
-        //     DespawnPlayerEntity(calculatedPowerLevel);
-        // }
         CalculatePowerLevelForEntity(calculatedPowerLevel, PlayerController.instance.totalPowerLevel, EntitySpawned);
 
         PlayerController.instance.totalPowerLevel = calculatedPowerLevel;
@@ -146,11 +116,9 @@ public class MultiplyPlate : MonoBehaviour
     }
     public void CalculatePowerLevelForEntity(int calculatedPowerLevel, int currentPowerLevel, int newSpawn)
     {
-        // List<Transform> PlayerEntity = PlayerController.instance.entitySpawnPositions.Where(e => e.childCount>0).ToList<Transform>(); // change this, should get the list ref from object pool
         List<GameObject> PlayerEntity = ObjectPooler.instance.GetActivePoolObjects("PlayerEntity");
         int activePlayerEntity = ObjectPooler.instance.ActivePooledObjectCount("PlayerEntity");
         int offset = Mathf.Abs(calculatedPowerLevel - currentPowerLevel - newSpawn);
-
         // increase
         if (calculatedPowerLevel > currentPowerLevel)
         {
@@ -162,18 +130,17 @@ public class MultiplyPlate : MonoBehaviour
                 {
                     PlayerEntity pe = entity.GetComponent<PlayerEntity>();
                     pe.powerLevel += plArr[index];
-                    pe.ChangeAppearance(); // NOTE: move this somewhere else
+                    pe.ChangeAppearance(); 
                     index++;
                 }
             }
             else if (offset <= activePlayerEntity && activePlayerEntity == PlayerController.instance.maxUnit)
             {
-                PlayerEntity pe = PlayerEntity[Random.Range(0, PlayerEntity.Count)].GetComponent<PlayerEntity>();
-                pe.powerLevel += (offset);
-                pe.ChangeAppearance();
+                PlayerEntity playerEntity = PlayerEntity[Random.Range(0, PlayerEntity.Count)].GetComponent<PlayerEntity>();
+                playerEntity.powerLevel += (offset);
+                playerEntity.ChangeAppearance();
             }
-
-            // grouping NOTE: Still have small bug that might break the power level calculation
+            // grouping
             if (activePlayerEntity >= 10)
             {
                 List<PlayerEntity> groupList =
@@ -184,13 +151,13 @@ public class MultiplyPlate : MonoBehaviour
                 // Debug.Log("group player entity: " + grouped); // debug
             }
         }
-
         // decrease
         if (calculatedPowerLevel < currentPowerLevel)
         {
-            if (calculatedPowerLevel < PlayerController.instance.maxUnit)
+            if (calculatedPowerLevel < PlayerController.instance.maxUnit) // split the player entity
             {
-                SplitPlayerEntity(calculatedPowerLevel, activePlayerEntity);
+                PlayerController.instance.RemoveAllEntity();
+                SpawnPlayerEntity(calculatedPowerLevel);
                 return;
             }
             if (offset > activePlayerEntity)
@@ -236,13 +203,13 @@ public class MultiplyPlate : MonoBehaviour
                 }
                 if (killList.Count > 0)
                 {
-                    foreach (var e in killList)
-                        e.Kill();
+                    foreach (var entity in killList)
+                        entity.Kill();
                 }
             }
             if (offset < activePlayerEntity && calculatedPowerLevel >= PlayerController.instance.maxUnit)
             {
-                int pld = offset;
+                int powerLevelDecrease = offset;
                 List<PlayerEntity> killList = new List<PlayerEntity>();
 
                 /* 3 outcomes: 
@@ -251,18 +218,18 @@ public class MultiplyPlate : MonoBehaviour
                 * power level - pdl = 0 -> break
                 *
                 */
-                while (pld > 0)
+                while (powerLevelDecrease > 0)
                 {
                     // Debug.Log("loop offset < active");
-                    PlayerEntity rdEntity = PlayerEntity[Random.Range(0, PlayerEntity.Count)].GetComponent<PlayerEntity>();
-                    if (killList.Contains(rdEntity))
+                    PlayerEntity randomEntity = PlayerEntity[Random.Range(0, PlayerEntity.Count)].GetComponent<PlayerEntity>();
+                    if (killList.Contains(randomEntity))
                         continue;
-                    rdEntity.powerLevel -= pld;
-                    rdEntity.ChangeAppearance(); // NOTE: move this somewhere else
-                    if (rdEntity.powerLevel <= 0)
+                    randomEntity.powerLevel -= powerLevelDecrease;
+                    randomEntity.ChangeAppearance(); // NOTE: move this somewhere else
+                    if (randomEntity.powerLevel <= 0)
                     {
-                        pld = Mathf.Abs(rdEntity.powerLevel);
-                        killList.Add(rdEntity);
+                        powerLevelDecrease = Mathf.Abs(randomEntity.powerLevel);
+                        killList.Add(randomEntity);
                     }
                     else break;
                 }
@@ -274,12 +241,8 @@ public class MultiplyPlate : MonoBehaviour
             }
 
         }
-
-        // debugging
-        // Debug.Log("new spawn: " + newSpawn + "\noffset: " + offset + "\n activate player entity: " + activePlayerEntity);
     }
-    // partition power level into n chunks where difference between max and min value is minimum
-
+    
     public bool GroupPlayerEntity(List<PlayerEntity> entities)
     {
         int sumPower = 0;
@@ -291,14 +254,14 @@ public class MultiplyPlate : MonoBehaviour
                 maxTier = entity.GetTier();
         }
         // PlayerEntity temp = ObjectPooler.instance.GetPooledObject("PlayerEntity").GetComponent<PlayerEntity>();
-        PlayerEntity rdEntity = entities[Random.Range(0, entities.Count())];
-        int tempPL = rdEntity.powerLevel;
-        rdEntity.powerLevel = sumPower;
-        if (rdEntity.GetTier() > maxTier)
+        PlayerEntity randomEntity = entities[Random.Range(0, entities.Count())];
+        int tempPowerlevel = randomEntity.powerLevel;
+        randomEntity.powerLevel = sumPower;
+        if (randomEntity.GetTier() > maxTier)
         {
             // Debug.Log("sum power of 3 random entity: " + sumPower);
-            rdEntity.ChangeAppearance();
-            entities.Remove(rdEntity);
+            randomEntity.ChangeAppearance();
+            entities.Remove(randomEntity);
             foreach (var entity in entities)
             {
                 entity.powerLevel = 1;
@@ -308,7 +271,7 @@ public class MultiplyPlate : MonoBehaviour
             }
             return true;
         }
-        else rdEntity.powerLevel = tempPL; //return to the old power level
+        else randomEntity.powerLevel = tempPowerlevel; //return to the old power level
         return false;
 
     }

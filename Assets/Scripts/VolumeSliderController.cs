@@ -6,8 +6,8 @@ using System;
 using TMPro;
 public class VolumeSliderController : MonoBehaviour
 {
-    [SerializeField] Slider slider;
-    Action SetUp, sliderListener;
+    [SerializeField] Slider _slider;
+    Action SetUp, SliderListener;
     public VolumeType volumeType;
     public TextMeshProUGUI valueText;
     public enum VolumeType
@@ -18,7 +18,7 @@ public class VolumeSliderController : MonoBehaviour
     };
     private void Awake()
     {
-        slider = GetComponent<Slider>();
+        _slider = GetComponent<Slider>();
         switch (volumeType)
         {
             case VolumeType.MASTER:
@@ -34,40 +34,40 @@ public class VolumeSliderController : MonoBehaviour
     private void Start()
     {
         SetUp();
-        slider.onValueChanged.AddListener(delegate { sliderListener(); });
+        _slider.onValueChanged.AddListener(delegate { SliderListener(); });
     }
     private void OnEnable()
     {
     }
     public void UpdateMasterVolume()
     {
-        AudioManager.instance.MVM = slider.value;
-        valueText.text = Math.Round(slider.value * 100f, 1).ToString() + "%";
+        AudioManager.instance.MasterVolume = _slider.value;
+        valueText.text = Math.Round(_slider.value * 100f, 1).ToString() + "%";
         // valueText.text = (slider.value * 100).ToString(".#") + "%";
 
     }
 
     public void UpdateSoundTrackVolume()
     {
-        AudioManager.instance.STV = slider.value;
-        valueText.text = Math.Round(slider.value * 100f, 1).ToString() + "%";
+        AudioManager.instance.SountrackVolume = _slider.value;
+        valueText.text = Math.Round(_slider.value * 100f, 1).ToString() + "%";
         // valueText.text = (slider.value * 100).ToString(".#") + "%";
     }
 
     public void SetUpControlForMasterVolume()
     {
-        slider.value = AudioManager.instance.MVM;
-        slider.onValueChanged.AddListener(delegate { UpdateMasterVolume(); });
-        sliderListener = UpdateMasterVolume;
-        valueText.text = Math.Round(slider.value * 100f, 1).ToString() + "%";
+        _slider.value = AudioManager.instance.MasterVolume;
+        _slider.onValueChanged.AddListener(delegate { UpdateMasterVolume(); });
+        SliderListener = UpdateMasterVolume;
+        valueText.text = Math.Round(_slider.value * 100f, 1).ToString() + "%";
 
     }
     public void SetUpControlForSoundTrackVolume()
     {
-        slider.value = AudioManager.instance.STV;
-        slider.onValueChanged.AddListener(delegate { UpdateSoundTrackVolume(); });
-        sliderListener = UpdateSoundTrackVolume;
-        valueText.text = Math.Round(slider.value * 100f, 1).ToString() + "%";
+        _slider.value = AudioManager.instance.SountrackVolume;
+        _slider.onValueChanged.AddListener(delegate { UpdateSoundTrackVolume(); });
+        SliderListener = UpdateSoundTrackVolume;
+        valueText.text = Math.Round(_slider.value * 100f, 1).ToString() + "%";
 
     }
 }

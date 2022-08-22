@@ -30,7 +30,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private float _masterVolumeMultiplier;
     [Range(0f, 1f)]
     [SerializeField] private float _soundTrackVolume;
-    public float MVM // master volume multiplier
+    public float MasterVolume // master volume multiplier
     {
         get
         {
@@ -43,7 +43,7 @@ public class AudioManager : MonoBehaviour
 
         }
     }
-    public float STV // sound track volume
+    public float SountrackVolume // sound track volume
     {
         get
         {
@@ -77,7 +77,6 @@ public class AudioManager : MonoBehaviour
         None = -1,
 
     }
-    //can't use struct and dictionary type is a bit limited
     public class soundTimer
     {
         public Sound soundType;
@@ -93,7 +92,7 @@ public class AudioManager : MonoBehaviour
 
     /*
     List of sound with delay add more into it if there are more sound need time delay 
-    Current array size: 1 <- increase this number if there are more 
+    Current array size: 0 <- increase this number if there are more 
     */
     public static soundTimer[] soundTimerArray;
 
@@ -108,7 +107,6 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        // PlaySoundTrack(SoundTrack.NormalLevelST);
         switch (SceneManager.GetActiveScene().name)
         {
             default:
@@ -161,7 +159,7 @@ public class AudioManager : MonoBehaviour
             sound.SetActive(false);
 
     }
-    //Spacial Sound 
+    // play spacial Sound 
     public void PlaySound(Sound sound, Vector3 position)
     {
         if (CanPlaySound(sound))
@@ -174,14 +172,13 @@ public class AudioManager : MonoBehaviour
                 soundGameObject.transform.parent = AudioManager.instance.transform;
                 _spacialSounds.Add(soundGameObject);
             }
-            // GameObject soundGameObject = new GameObject("Spacial Sound ");
             soundGameObject.transform.position = position;
             soundGameObject.SetActive(true);
             SoundAudioClip<Sound> s = System.Array.Find(soundAudiosClipArray, Sound => Sound.sound == sound);
             soundGameObject.name = $"Spacial Sound {s.name}";
             var audioSource = soundGameObject.GetComponent<AudioSource>();
             audioSource.loop = s.loop;
-            audioSource.volume = s.volume * MVM;
+            audioSource.volume = s.volume * MasterVolume;
             audioSource.pitch = s.pitch;
             audioSource.spatialBlend = 1f;
             audioSource.rolloffMode = AudioRolloffMode.Linear;
@@ -190,7 +187,6 @@ public class AudioManager : MonoBehaviour
             audioSource.clip = GetAudioClip(sound);
             audioSource.Play();
             if (!audioSource.loop)
-                // Destroy(soundGameObject, audioSource.clip.length);
                 StartCoroutine(DisableSoundObject(soundGameObject, audioSource.clip.length));
         }
     }
@@ -201,6 +197,7 @@ public class AudioManager : MonoBehaviour
             if (_oneShotGameObject == null)
             {
                 _oneShotGameObject = new GameObject();
+                _oneShotGameObject.transform.parent = instance.transform;
                 _oneShotAudioSource = _oneShotGameObject.AddComponent<AudioSource>();
             }
             //GameObject soundGameObject = new GameObject("Sound");
@@ -209,7 +206,7 @@ public class AudioManager : MonoBehaviour
             _oneShotGameObject.SetActive(true);
             _oneShotGameObject.name = "Oneshot sound " + s.name;
             _oneShotAudioSource.loop = s.loop;
-            _oneShotAudioSource.volume = s.volume * MVM;
+            _oneShotAudioSource.volume = s.volume * MasterVolume;
             _oneShotAudioSource.pitch = s.pitch;
             _oneShotAudioSource.clip = GetAudioClip(sound);
             _oneShotAudioSource.Play();
@@ -233,7 +230,7 @@ public class AudioManager : MonoBehaviour
         SoundAudioClip<SoundTrack> s = System.Array.Find(soundTrackArray, SoundTrack => SoundTrack.sound == soundTrack);
         _soundTrackAudioSource.name = s.name;
         _soundTrackAudioSource.loop = s.loop;
-        _soundTrackAudioSource.volume = STV * MVM;
+        _soundTrackAudioSource.volume = SountrackVolume * MasterVolume;
         _soundTrackAudioSource.pitch = s.pitch;
         // soundTrackAudioSource.PlayOneShot(GetAudioClip(soundTrack));
         _soundTrackAudioSource.clip = GetAudioClip(soundTrack);
@@ -264,7 +261,6 @@ public class AudioManager : MonoBehaviour
     }
     public static AudioClip GetAudioClip(Sound sound)
     {
-
         foreach (SoundAudioClip<Sound> soundAudioClip in instance.soundAudiosClipArray)
         {
             if (soundAudioClip.sound == sound)
@@ -324,22 +320,22 @@ public class AudioManager : MonoBehaviour
     {
         if (_soundTrackGameObject != null)
         {
-            _soundTrackAudioSource.volume = STV * MVM; // redundant 
+            _soundTrackAudioSource.volume = SountrackVolume * MasterVolume; // redundant 
         }
     }
     public virtual void OnSoundTrackVolumeChange()
     {
         if (_soundTrackGameObject != null)
         {
-            _soundTrackAudioSource.volume = STV * MVM; // redundant
+            _soundTrackAudioSource.volume = SountrackVolume * MasterVolume; // redundant
         }
     }
     public void LoadAudioSetting()
     {
         if (GameManager.instance.settingData != null)
         {
-            MVM = GameManager.instance.settingData.masterVolume;
-            STV = GameManager.instance.settingData.musicVolume;
+            MasterVolume = GameManager.instance.settingData.masterVolume;
+            SountrackVolume = GameManager.instance.settingData.musicVolume;
         }
     }
 }

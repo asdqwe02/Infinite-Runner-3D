@@ -10,7 +10,7 @@ public class Bomb : MonoBehaviour
     public float speed;
     public int damage;
     float startTime;
-    Vector3 centerPoint, startRelCenter, endRelCenter;
+    Vector3 centerPoint, startRelCenter, endRelCenter; // start and end point relative center
     public Transform eplodeEffect;
     [SerializeField] private List<EnemyEntity> enemyEntities;
     ParticleSystemRenderer psr;

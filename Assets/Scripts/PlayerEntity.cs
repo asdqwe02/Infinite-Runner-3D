@@ -32,7 +32,6 @@ public class PlayerEntity : Entity
     }
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
         PlayerController.instance.RotateEntity += RotateEntity;
         _default_pos = transform.localPosition;
         foreach (Transform child in transform)
@@ -41,8 +40,6 @@ public class PlayerEntity : Entity
             if (laserTarget != null)
                 break;
         }
-
-        // _renderer = GetComponentInChildren<SkinnedMeshRenderer>(); // don't use this
     }
     private void OnEnable()
     {
@@ -50,7 +47,6 @@ public class PlayerEntity : Entity
         _hit = false;
         BackToGround();
     }
-    // Update is called once per frame
     void Update()
     {
         // currentTier = GetTier(); // debug only
@@ -121,9 +117,8 @@ public class PlayerEntity : Entity
     public void FlyUp()
     {
         flying = true;
-        flyUpYPosition = UnityEngine.Random.Range(3.5f, 5.5f); // arbitrary
+        flyUpYPosition = UnityEngine.Random.Range(3.5f, 5.5f); // arbitrary offset just to make thing look cool
         _default_pos.y = flyUpYPosition;
-        // transform.Rotate(new Vector3(flyUpRotationX, 0, 0), Space.World); 
         animator.SetBool("IsFlying", true);
         animator.SetBool("Running", false);
     }
@@ -135,10 +130,6 @@ public class PlayerEntity : Entity
             _default_pos.y = -PlayerController.instance.transform.position.y;
         animator.SetBool("IsFlying", false);
         animator.SetBool("Running", true);
-    }
-    public override void ChangeAppearance()
-    {
-        base.ChangeAppearance();
     }
     public void SetUpShield()
     {
@@ -158,13 +149,13 @@ public class PlayerEntity : Entity
     public override void TakeDamage(int Damage)
     {
         int finalDamage = Damage;
-        int pePL = powerLevel; // save old player powerlevel
+        int oldPowerLevel = powerLevel; // save old player powerlevel
         finalDamage -= _shield;
 
         powerLevel -= finalDamage;
         _shield -= Damage;
         if (powerLevel <= 0)
-            PlayerController.instance.totalPowerLevel -= pePL;
+            PlayerController.instance.totalPowerLevel -= oldPowerLevel;
         else
         {
             PlayerController.instance.totalPowerLevel -= finalDamage;
@@ -183,13 +174,5 @@ public class PlayerEntity : Entity
             bomb.GetComponent<Bomb>().SetUp(target, transform, powerLevel, tiers[GetTier()].color);
             bomb.SetActive(true);
         }
-    }
-    public void PauseAllSound()
-    {
-
-    }
-    public void ResumeAllSound()
-    {
-        
     }
 }

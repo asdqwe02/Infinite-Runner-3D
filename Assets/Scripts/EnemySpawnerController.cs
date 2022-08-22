@@ -9,12 +9,12 @@ public class EnemySpawnerController : MonoBehaviour
     public float offsetZ, offsetX;
     public List<MultiplyPlate> multiplyPlate;
     public int maxPowerLevel = 0;
-    List<Vector3> enemyPos;
+    List<Vector3> _enemyPos; // enemy positions
     public bool render;
     public List<EnemyEntity> enemyEntityList;
     void Awake()
     {
-        enemyPos = new List<Vector3>();
+        _enemyPos = new List<Vector3>();
         offsetX = GetComponent<Renderer>().bounds.size.x / 2;
         offsetZ = GetComponent<Renderer>().bounds.size.z / 2;
         multiplyPlate = transform.parent.GetComponentsInChildren<MultiplyPlate>().ToList<MultiplyPlate>();
@@ -40,21 +40,21 @@ public class EnemySpawnerController : MonoBehaviour
             for (int i = 0; i < maxPowerLevel; i++)
             {
                 // Debug.Log("spawn enemy dummy");
-                GameObject ee = ObjectPooler.instance.GetPooledObject("EnemyEntity");
-                if (ee != null)
+                GameObject enemyEntity = ObjectPooler.instance.GetPooledObject("EnemyEntity");
+                if (enemyEntity != null)
                 {
                     Vector3 randomPos = transform.position + new Vector3(Random.Range(-offsetX, offsetX), 0, Random.Range(-offsetZ, offsetZ));
-                    while (enemyPos.Contains(randomPos))
+                    while (_enemyPos.Contains(randomPos))
                     {
                         randomPos = new Vector3(Random.Range(-offsetX, offsetX), 0, Random.Range(-offsetZ, offsetZ));
                     }
-                    enemyPos.Add(randomPos);
+                    _enemyPos.Add(randomPos);
                     
-                    ee.transform.position = randomPos;
-                    ee.GetComponent<EnemyEntity>().ChangeAppearance();
-                    ee.transform.parent = transform;
-                    ee.SetActive(true);
-                    enemyEntityList.Add(ee.GetComponent<EnemyEntity>());
+                    enemyEntity.transform.position = randomPos;
+                    enemyEntity.GetComponent<EnemyEntity>().ChangeAppearance();
+                    enemyEntity.transform.parent = transform;
+                    enemyEntity.SetActive(true);
+                    enemyEntityList.Add(enemyEntity.GetComponent<EnemyEntity>());
                 }
             }
         }
@@ -63,7 +63,7 @@ public class EnemySpawnerController : MonoBehaviour
             for (int i = 0; i < PlayerController.instance.maxUnit; i++)
             {
                 Vector3 randomPos = transform.position + new Vector3(Random.Range(-offsetX, offsetX), 0, Random.Range(-offsetZ, offsetZ));
-                while (enemyPos.Contains(randomPos))
+                while (_enemyPos.Contains(randomPos))
                 {
                     randomPos = new Vector3(Random.Range(-offsetX, offsetX), 0, Random.Range(-offsetZ, offsetZ));
                 }
@@ -75,7 +75,7 @@ public class EnemySpawnerController : MonoBehaviour
                     enemyEntityList.Add(enemyEntity.GetComponent<EnemyEntity>());
                 }
             }
-            DistributePowerLevel();
+            DistributePowerLevel(); 
         }
     }
     public void DespawnEnemyEntity()
@@ -85,19 +85,19 @@ public class EnemySpawnerController : MonoBehaviour
             ObjectPooler.instance.DeactivatePooledObject(entity.gameObject);
         }
         enemyEntityList.Clear();
-        enemyPos.Clear();
+        _enemyPos.Clear();
     }
+    // distribute power level is used when the amount of enemy enity to spawn is equal to player entity maximum unit count (default is 16)
     public void DistributePowerLevel()
     {
         int[] pArr = PartitionPowerLevel(maxPowerLevel, PlayerController.instance.maxUnit);
         int index = 0;
 
-        foreach (var entity in enemyEntityList)
+        foreach (var enemyEntity in enemyEntityList)
         {
-
-            entity.powerLevel = pArr[index];
-            entity.GetComponent<EnemyEntity>().ChangeAppearance();
-            entity.transform.parent = transform;
+            enemyEntity.powerLevel = pArr[index];
+            enemyEntity.GetComponent<EnemyEntity>().ChangeAppearance();
+            enemyEntity.transform.parent = transform;
             index++;
         }
     }

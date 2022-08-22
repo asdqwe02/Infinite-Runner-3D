@@ -12,8 +12,6 @@ public class LevelManager : MonoBehaviour
     }
     public List<Level> levelList;
 
-
-
     public int levelPassed; // use this to calculate point and maybe spawn obstacle
     public int nextLevelIndex;
     public int lastLevelIndex;
@@ -48,19 +46,25 @@ public class LevelManager : MonoBehaviour
     }
     private void Start()
     {
+        SetupSpawnerReference();
+    }
+    private void FixedUpdate()
+    {
+        foreach (Level level in levelList)
+        {
+            level.ground.Translate(Vector3.back * speed * Time.deltaTime, Space.World);
+        }
+    }
+    public void SetupSpawnerReference()
+    {
         for (int i = 0; i < levelList.Count - 1; i++) // ... WTF
         {
             levelList[i].ground.GetComponentInChildren<PlateController>().nextEnemySpannwer = levelList[i + 1].ground.GetComponentInChildren<EnemySpawnerController>();
             levelList[i + 1].ground.GetComponentInChildren<PlateController>().previousEnemySpannwer = levelList[i].ground.GetComponentInChildren<EnemySpawnerController>();
         }
+
         levelList[levelList.Count - 1].ground.GetComponentInChildren<PlateController>().nextEnemySpannwer = levelList[0].ground.GetComponentInChildren<EnemySpawnerController>();
-        
         levelList[0].ground.GetComponentInChildren<PlateController>().previousEnemySpannwer = levelList[levelList.Count - 1].ground.GetComponentInChildren<EnemySpawnerController>();
-        levelList[0].ground.GetComponentInChildren<PlateController>().currentEnenmySpawner.SpawnEnemyEntity(); // ... doesn't work ???? wtf
-    }
-    // Update is called once per frame
-    void Update()
-    {
 
     }
     public void GenerateLevel()
@@ -69,30 +73,22 @@ public class LevelManager : MonoBehaviour
         {
             DespawnObstacle(levelList[nextLevelIndex]);
             levelList[nextLevelIndex].ground.position = new Vector3(0, 0, _offsetZWorld + levelList[lastLevelIndex].ground.position.z);
-
-
             foreach (MultiplyPlate mp in levelList[nextLevelIndex].ground.GetComponentsInChildren<MultiplyPlate>())
             {
                 mp.RollMultiplyPlate();
             }
-
-
             // calculate next level to generate
             lastLevelIndex = nextLevelIndex;
             nextLevelIndex++;
             if (nextLevelIndex > levelList.Count - 1)
                 nextLevelIndex = 0;
-
-
             if (levelPassed >= levelToSpawnObstacle)
             {
-
                 if (nextLevelIndex + 1 > levelList.Count - 1)
                 {
                     // Debug.Log("spawn obstacle in level index: " + 0);
-                    SpawnObstacles(levelList[0], 2, true);
-                    SpawnObstacles(levelList[0], 2, false);
-
+                    SpawnObstacles(levelList[0], amount: 2, true);
+                    SpawnObstacles(levelList[0], amount: 2, false);
                 }
                 else
                 {
@@ -103,13 +99,7 @@ public class LevelManager : MonoBehaviour
             }
         }
     }
-    private void FixedUpdate()
-    {
-        foreach (Level level in levelList)
-        {
-            level.ground.Translate(Vector3.back * speed * Time.deltaTime, Space.World);
-        }
-    }
+
     public void CheckBoundary(Transform tObject)
     {
         Vector3 current_pos = tObject.position;
@@ -172,7 +162,6 @@ public class LevelManager : MonoBehaviour
         foreach (var obstacle in level.obstacleList)
         {
             float yPos = obstacle.transform.localPosition.y;
-
             obstacle.transform.parent = ObjectPooler.instance.transform;
             obstacle.transform.localPosition = new Vector3(0, yPos, 0);
             obstacle.SetActive(false);

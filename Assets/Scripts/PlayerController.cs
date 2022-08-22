@@ -199,7 +199,7 @@ public class PlayerController : MonoBehaviour
                 entity.FlyUp();
                 if (laser != null)
                 {
-                    laser.SetUp(entity, laserSkillTime, entity.powerLevel, pos.entity.GetComponent<PlayerEntity>().Renderer.material.color);
+                    laser.SetUp(entity, laserSkillTime, entity.powerLevel);
                     laser.gameObject.SetActive(true);
                     entityLaser.Add(laser);
                 }
@@ -243,13 +243,13 @@ public class PlayerController : MonoBehaviour
     }
     public void BombSkill(int amount)
     {
-        List<PlayerEntity> poeList = GetRandomItemsFromList<PlayerEntity>(GetPlayerEntityInSpawnPosition(entitySpawnPositions), amount);
+        List<PlayerEntity> playerEntityList = GetRandomItemsFromList<PlayerEntity>(GetPlayerEntityInSpawnPosition(entitySpawnPositions), amount);
         Transform currentLevel = LevelManager.instance.GetCurrentLevel();
         List<EnemyEntity> targetedEnemy = new List<EnemyEntity>(
             GetChildGameObjectWithScript<EnemyEntity>(currentLevel.GetComponentInChildren<EnemySpawnerController>().transform)); // WTF... AGAIN
         // Debug.Log(targetedEnemy);
 
-        foreach (var entity in poeList)
+        foreach (var entity in playerEntityList)
         {
             if (targetedEnemy.Count >= 1)
             {

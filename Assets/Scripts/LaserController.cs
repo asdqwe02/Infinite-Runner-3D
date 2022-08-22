@@ -11,15 +11,14 @@ public class LaserController : MonoBehaviour
     [SerializeField] private int _damage;
     public EntityTier laserTier;
     public float offset = 0.5f;
-    // Start is called before the first frame update
+   
     void Awake()
     {
         targetList = new List<Transform>();
         if (vfx == null)
             vfx = GetComponent<VisualEffect>();
     }
-
-    // Update is called once per frame
+ 
     void Update()
     {
         if (playerEntity.gameObject.activeSelf == false)
@@ -55,7 +54,7 @@ public class LaserController : MonoBehaviour
         targetList.Clear();
     }
 
-    public void SetUp(PlayerEntity entity, float duration, int damage, Color color)
+    public void SetUp(PlayerEntity entity, float duration, int damage)
     {
         vfx.SetFloat("Duration", duration);
         float intensity = Mathf.Pow(2, 1.2f); // intensity calculation is wrong

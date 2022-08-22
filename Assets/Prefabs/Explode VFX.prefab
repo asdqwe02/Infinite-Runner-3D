@@ -14625,8 +14625,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5236e36d9f89d8f45bdbe40886975eda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blast: {fileID: 945811689578469074}
-  spark: {fileID: 945811688611646811}
+  _blast: {fileID: 945811689578469074}
+  _spark: {fileID: 945811688611646811}
 --- !u!1 &945811689578469075
 GameObject:
   m_ObjectHideFlags: 0

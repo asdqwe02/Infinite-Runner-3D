@@ -9,15 +9,15 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public bool gameOver = false;
+    public bool fullScreen;
+    public bool pause;
     public uint score;
+    public int screenWidth = 1920, screenHeight = 1080;
     public Transform gameOverScreen;
     public Transform pauseScreen;
     public Transform skillSelectScreen;
     public Transform scoreText;
     public Transform gameOverScoreText;
-    public int screenWidth = 1920, screenHeight = 1080;
-    public bool fullScreen;
-    public bool pause;
     public SettingData settingData;
     private Material _pauseScreenMaterial;
     private void Awake()
@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
             TogglePause();
         }
         if (pause) // do this to have the pause screen shader effect
-            _pauseScreenMaterial.SetFloat("_UnscaledTime",Time.unscaledTime);
+            _pauseScreenMaterial.SetFloat("_UnscaledTime", Time.unscaledTime);
 
     }
     public IEnumerator PauseGame(float slowDuration)

@@ -44,7 +44,7 @@ Material:
     - _NoiseScale: 500
     - _NoiseStrength: 0.5
     - _ScrollSpeed: 1
-    - _UnscaledTime: 89.39416
+    - _UnscaledTime: 45.01344
     m_Colors:
     - _FresnelColor: {r: 4, g: 4, b: 4, a: 0}
     - _HologramTiling: {r: 64, g: 64, b: 0, a: 0}
