@@ -257,7 +257,6 @@ public class PlayerController : MonoBehaviour
                 entity.ThrowBomb(targetedEnemy[index].transform);
                 targetedEnemy.RemoveAt(index);
             }
-
         }
 
         StartCoroutine(PlayerSkillCD(skillCDTime, () => skillCD = false)); // start cooldown

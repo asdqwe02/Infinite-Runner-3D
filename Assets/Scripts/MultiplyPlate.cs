@@ -7,7 +7,6 @@ using static Utility;
 using TMPro;
 public class MultiplyPlate : MonoBehaviour
 {
-    // Start is called before the first frame update
     public int number;
     public TextMeshPro textMesh;
     public enum Expression
@@ -76,11 +75,11 @@ public class MultiplyPlate : MonoBehaviour
         }
         return 0; // => bug if got this
     }
-    public int SpawnPlayerEntity(int amount) 
+    public int SpawnPlayerEntity(int amount)
     {
         // int currentPowerLevel = PlayerController.instance.totalPowerLevel;
         int EntitySpawned = 0;
-        for (int i = 0; i < amount; i++) 
+        for (int i = 0; i < amount; i++)
         {
             GameObject playerEntity = ObjectPooler.instance.GetPooledObject("PlayerEntity");
             EntitySpawnPosition entitySpawnPos = PlayerController.instance.GetEntitySpawnPosition();
@@ -119,18 +118,18 @@ public class MultiplyPlate : MonoBehaviour
         List<GameObject> PlayerEntity = ObjectPooler.instance.GetActivePoolObjects("PlayerEntity");
         int activePlayerEntity = ObjectPooler.instance.ActivePooledObjectCount("PlayerEntity");
         int offset = Mathf.Abs(calculatedPowerLevel - currentPowerLevel - newSpawn);
+        int[] plArr = PartitionPowerLevel(offset, activePlayerEntity);
+        int index = 0;
         // increase
         if (calculatedPowerLevel > currentPowerLevel)
         {
             if (offset > activePlayerEntity)
             {
-                int[] plArr = PartitionPowerLevel(offset, activePlayerEntity);
-                int index = 0;
                 foreach (var entity in PlayerEntity) // get position with player entity
                 {
-                    PlayerEntity pe = entity.GetComponent<PlayerEntity>();
-                    pe.powerLevel += plArr[index];
-                    pe.ChangeAppearance(); 
+                    PlayerEntity playerEntity = entity.GetComponent<PlayerEntity>();
+                    playerEntity.powerLevel += plArr[index];
+                    playerEntity.ChangeAppearance();
                     index++;
                 }
             }
@@ -162,8 +161,7 @@ public class MultiplyPlate : MonoBehaviour
             }
             if (offset > activePlayerEntity)
             {
-                int[] plArr = PartitionPowerLevel(offset, activePlayerEntity);
-                int index = 0;
+
                 List<PlayerEntity> killList = new List<PlayerEntity>();
                 foreach (var entity in PlayerEntity)
                 {
@@ -199,7 +197,6 @@ public class MultiplyPlate : MonoBehaviour
 
                         }
                     }
-
                 }
                 if (killList.Count > 0)
                 {
@@ -242,7 +239,7 @@ public class MultiplyPlate : MonoBehaviour
 
         }
     }
-    
+
     public bool GroupPlayerEntity(List<PlayerEntity> entities)
     {
         int sumPower = 0;

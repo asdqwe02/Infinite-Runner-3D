@@ -6,12 +6,12 @@ public class SettingPanelNavController : MonoBehaviour
 {
     [SerializeField] List<Transform> _panelList;
     [SerializeField] Button _leftButton, _rightButton;
-
     private int _panelIndex, _previousPanelIndex;
 
 
     private void Awake()
     {
+       
         _panelIndex = 0;
         _previousPanelIndex = _panelIndex;
         _leftButton.onClick.AddListener(() =>
@@ -32,10 +32,6 @@ public class SettingPanelNavController : MonoBehaviour
 
 
     }
-    private void Start()
-    {
-
-    }
     public void ChangePanel()
     {
         _panelList[_previousPanelIndex].gameObject.SetActive(false);
@@ -54,6 +50,5 @@ public class SettingPanelNavController : MonoBehaviour
             _panelIndex = _panelList.Count - 1;
         }
     }
-
-
 }
+

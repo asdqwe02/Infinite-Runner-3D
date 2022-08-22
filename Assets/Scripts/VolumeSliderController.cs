@@ -22,10 +22,10 @@ public class VolumeSliderController : MonoBehaviour
         switch (volumeType)
         {
             case VolumeType.MASTER:
-                SetUp = SetUpControlForMasterVolume;
+                SetUp = SetupMasterVolumeControl;
                 break;
             case VolumeType.SOUNDTRACK:
-                SetUp = SetUpControlForSoundTrackVolume;
+                SetUp = SetupSoundTrackVolumeControl;
                 break;
             default:
                 break;
@@ -54,7 +54,7 @@ public class VolumeSliderController : MonoBehaviour
         // valueText.text = (slider.value * 100).ToString(".#") + "%";
     }
 
-    public void SetUpControlForMasterVolume()
+    public void SetupMasterVolumeControl()
     {
         _slider.value = AudioManager.instance.MasterVolume;
         _slider.onValueChanged.AddListener(delegate { UpdateMasterVolume(); });
@@ -62,7 +62,7 @@ public class VolumeSliderController : MonoBehaviour
         valueText.text = Math.Round(_slider.value * 100f, 1).ToString() + "%";
 
     }
-    public void SetUpControlForSoundTrackVolume()
+    public void SetupSoundTrackVolumeControl()
     {
         _slider.value = AudioManager.instance.SountrackVolume;
         _slider.onValueChanged.AddListener(delegate { UpdateSoundTrackVolume(); });

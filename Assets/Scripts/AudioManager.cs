@@ -23,7 +23,7 @@ public class AudioManager : MonoBehaviour
     public static AudioManager instance;
     private static GameObject _oneShotGameObject;
     private static AudioSource _oneShotAudioSource;
-    private static GameObject _soundTrackGameObject;
+    private static SoundTrackObject _soundTrackObject;
     private static AudioSource _soundTrackAudioSource;
     private List<GameObject> _spacialSounds;
     [Range(0f, 1f)]
@@ -77,6 +77,35 @@ public class AudioManager : MonoBehaviour
         None = -1,
 
     }
+    public class SoundTrackObject
+    {
+        public GameObject gameObject;
+        public AudioSource audioSource;
+        public AudioLowPassFilter lowPassFilter;
+        public AudioDistortionFilter distortionFilter;
+        private float _distortionLevel = .3f;
+        private int _cutoffFrequency = 750;
+        public SoundTrackObject()
+        {
+            gameObject = new GameObject();
+            audioSource = gameObject.AddComponent<AudioSource>();
+            distortionFilter = gameObject.AddComponent<AudioDistortionFilter>();
+            lowPassFilter = gameObject.AddComponent<AudioLowPassFilter>();
+
+            distortionFilter.distortionLevel = _distortionLevel;
+            lowPassFilter.cutoffFrequency = _cutoffFrequency;
+        }
+        public void EnableFilter()
+        {
+            distortionFilter.enabled = true;
+            lowPassFilter.enabled = true;            
+        }
+        public void DisableFilter()
+        {
+            distortionFilter.enabled = false;
+            lowPassFilter.enabled = false;
+        }
+    }
     public class soundTimer
     {
         public Sound soundType;
@@ -119,7 +148,6 @@ public class AudioManager : MonoBehaviour
         {
             PlaySoundTrack(SoundTrack.ST02);
         }
-        else Destroy(_soundTrackGameObject);
         DontDestroyOnLoad(gameObject);
     }
     void Start()
@@ -221,26 +249,29 @@ public class AudioManager : MonoBehaviour
     }
     public void PlaySoundTrack(SoundTrack soundTrack)
     {
-        if (_soundTrackGameObject == null)
+        if (_soundTrackObject == null)
         {
-            _soundTrackGameObject = new GameObject();
-            _soundTrackAudioSource = _soundTrackGameObject.AddComponent<AudioSource>();
-            DontDestroyOnLoad(_soundTrackGameObject);
+            _soundTrackObject = new SoundTrackObject();
+            _soundTrackObject.DisableFilter();
+            _soundTrackObject.gameObject.transform.parent = instance.transform;
+            // DontDestroyOnLoad(_soundTrackGameObject);
         }
         SoundAudioClip<SoundTrack> s = System.Array.Find(soundTrackArray, SoundTrack => SoundTrack.sound == soundTrack);
-        _soundTrackAudioSource.name = s.name;
-        _soundTrackAudioSource.loop = s.loop;
-        _soundTrackAudioSource.volume = SountrackVolume * MasterVolume;
-        _soundTrackAudioSource.pitch = s.pitch;
+        _soundTrackObject.audioSource.name = s.name;
+        _soundTrackObject.audioSource.loop = s.loop;
+        _soundTrackObject.audioSource.volume = SountrackVolume * MasterVolume;
+        _soundTrackObject.audioSource.pitch = s.pitch;
         // soundTrackAudioSource.PlayOneShot(GetAudioClip(soundTrack));
-        _soundTrackAudioSource.clip = GetAudioClip(soundTrack);
-        _soundTrackAudioSource.Play();
+        _soundTrackObject.audioSource.clip = GetAudioClip(soundTrack);
+        _soundTrackObject.audioSource.Play();
     }
 
     public void PauseAllSound()
     {
-        if (_soundTrackGameObject)
-            _soundTrackGameObject.GetComponent<AudioSource>().Pause();
+        if (_soundTrackObject != null)
+        {
+            _soundTrackObject.EnableFilter();
+        }
         if (_oneShotGameObject)
             _oneShotGameObject.GetComponent<AudioSource>().Pause();
         foreach (var spacialSound in GetActiveSpacialSound())
@@ -250,8 +281,10 @@ public class AudioManager : MonoBehaviour
     }
     public void ResumeAllSound()
     {
-        if (_soundTrackGameObject)
-            _soundTrackGameObject.GetComponent<AudioSource>().Play();
+        if (_soundTrackObject != null)
+        {
+            _soundTrackObject.DisableFilter();
+        }
         if (_oneShotGameObject)
             _oneShotGameObject.GetComponent<AudioSource>().Play();
         foreach (var spacialSound in GetActiveSpacialSound())
@@ -297,19 +330,19 @@ public class AudioManager : MonoBehaviour
         return true;
     }
 
-    public GameObject GetSoundTrackGameObject()
+    public SoundTrackObject GetSoundTrackGameObject()
     {
-        return _soundTrackGameObject;
+        return _soundTrackObject;
     }
 
     public IEnumerator FadeOutST(float fadeDuration = 0f, float targetVolumne = 0, SoundTrack NextST = SoundTrack.None)
     {
         float currentTime = 0;
-        float start = _soundTrackAudioSource.volume;
+        float start = _soundTrackObject.audioSource.volume;
         while (currentTime < fadeDuration)
         {
             currentTime += Time.deltaTime;
-            _soundTrackAudioSource.volume = Mathf.Lerp(start, targetVolumne, currentTime / fadeDuration);
+            _soundTrackObject.audioSource.volume = Mathf.Lerp(start, targetVolumne, currentTime / fadeDuration);
             yield return null;
         }
         PlaySoundTrack(NextST);
@@ -318,16 +351,16 @@ public class AudioManager : MonoBehaviour
 
     public virtual void OnMasterVolumeChange()
     {
-        if (_soundTrackGameObject != null)
+        if (_soundTrackObject != null)
         {
-            _soundTrackAudioSource.volume = SountrackVolume * MasterVolume; // redundant 
+            _soundTrackObject.audioSource.volume = SountrackVolume * MasterVolume; // redundant 
         }
     }
     public virtual void OnSoundTrackVolumeChange()
     {
-        if (_soundTrackGameObject != null)
+        if (_soundTrackObject != null)
         {
-            _soundTrackAudioSource.volume = SountrackVolume * MasterVolume; // redundant
+            _soundTrackObject.audioSource.volume = SountrackVolume * MasterVolume; // redundant
         }
     }
     public void LoadAudioSetting()

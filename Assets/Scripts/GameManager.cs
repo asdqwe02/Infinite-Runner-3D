@@ -106,7 +106,7 @@ public class GameManager : MonoBehaviour
     {
         Screen.SetResolution(screenWidth, screenHeight, fullScreen);
     }
-    public void ToggleFullScreen()
+    public void ToggleFullScreen() // bug
     {
         if (Screen.fullScreen)
         {

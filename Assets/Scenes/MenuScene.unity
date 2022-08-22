@@ -1328,7 +1328,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1535b85ca9b024b49b36e8548518dba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  _slider: {fileID: 0}
   volumeType: 0
   valueText: {fileID: 1909759493}
 --- !u!1 &327381115
@@ -7013,10 +7013,10 @@ RectTransform:
   m_Father: {fileID: 994866112}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 2100, y: 1300}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -6.4818726, y: -17.89972}
+  m_SizeDelta: {x: 580.1182, y: 458.1967}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1785759862
 MonoBehaviour:
@@ -7619,7 +7619,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1535b85ca9b024b49b36e8548518dba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  _slider: {fileID: 0}
   volumeType: 1
   valueText: {fileID: 410874062}
 --- !u!1 &2083145268
@@ -7791,16 +7791,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameOver: 0
+  fullScreen: 1
+  pause: 0
   score: 0
+  screenWidth: 1920
+  screenHeight: 1080
   gameOverScreen: {fileID: 0}
   pauseScreen: {fileID: 0}
   skillSelectScreen: {fileID: 0}
   scoreText: {fileID: 0}
   gameOverScoreText: {fileID: 0}
-  screenWidth: 1920
-  screenHeight: 1080
-  fullScreen: 1
-  pause: 0
   settingData:
     masterVolume: 0
     musicVolume: 0
