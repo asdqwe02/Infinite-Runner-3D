@@ -5,6 +5,17 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using System;
+public class ResolutionEventArgs : EventArgs
+{
+    public int screenWidth;
+    public int screenHeight;
+    public bool fullScreen;
+    public ResolutionEventArgs(int width,int height, bool fullScreen) {
+        screenWidth = width;
+        screenHeight = height;
+        this.fullScreen = fullScreen;
+    }
+}
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
@@ -18,8 +29,10 @@ public class GameManager : MonoBehaviour
     public Transform skillSelectScreen;
     public Transform scoreText;
     public Transform gameOverScoreText;
+    public Toggle fullScreenToggle;
     public SettingData settingData;
     private Material _pauseScreenMaterial;
+    public event EventHandler<ResolutionEventArgs> ResolutionChanged;
     private void Awake()
     {
         if (instance == null)
@@ -33,6 +46,7 @@ public class GameManager : MonoBehaviour
         if (scoreText)
             scoreText.GetComponent<TextMeshProUGUI>().text = score.ToString();
         gameOver = false;
+        fullScreen = Screen.fullScreen;
         if (pauseScreen)
             _pauseScreenMaterial = pauseScreen.GetComponent<Image>().material;
         LoadSettingData();
@@ -104,21 +118,16 @@ public class GameManager : MonoBehaviour
     }
     public void SetResolution()
     {
+        // Debug.Log($"fullscreen: {fullScreen}");
+        // Debug.Log( $"resolution: {screenWidth}*{screenHeight}");
         Screen.SetResolution(screenWidth, screenHeight, fullScreen);
+        OnResolutionChange(new ResolutionEventArgs(screenWidth,screenHeight,fullScreen));
     }
-    public void ToggleFullScreen() // bug
+    public void ToggleFullScreen(bool fullScreen) // bug
     {
-        if (Screen.fullScreen)
-        {
-            Screen.fullScreenMode = FullScreenMode.Windowed;
-            Screen.fullScreen = false;
-        }
-        else
-        {
-            Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
-            Screen.fullScreen = true;
-        }
-        fullScreen = Screen.fullScreen;
+        Screen.fullScreenMode = fullScreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed; 
+        this.fullScreen = fullScreen;
+        SetResolution();
         // Debug.Log(Screen.fullScreen);
     }
     public void SetResWidth(int width)
@@ -143,5 +152,9 @@ public class GameManager : MonoBehaviour
     public void SaveSettingData()
     {
         SaveSystem.SaveSetting(AudioManager.instance, GameManager.instance);
+    }
+    protected virtual void OnResolutionChange(ResolutionEventArgs e)
+    {
+        ResolutionChanged?.Invoke(this,e);
     }
 }

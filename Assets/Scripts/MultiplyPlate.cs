@@ -7,16 +7,19 @@ using static Utility;
 using TMPro;
 public class MultiplyPlate : MonoBehaviour
 {
-    public int number;
+    public int value;
     public TextMeshPro textMesh;
-    public enum Expression
+    public enum ExpressionType
     {
         PLUS,
         MULTIPLY,
-        MINUS,
+        SUBTRACT,
         DIVIDE,
+        EQUAL,
+        SQRT,
     }
-    public Expression expression;
+    public ExpressionType expresionType;
+    Expression expression;
     public bool trigger;
     void Start()
     {
@@ -33,47 +36,34 @@ public class MultiplyPlate : MonoBehaviour
     }
     public void RollMultiplyPlate()
     {
-        // tm.text="";
-        number = Random.Range(2, 6);
-        expression = (Expression)Random.Range(0, 4);
-        switch (expression)
+        value = Random.Range(2, 6);
+        expresionType = (ExpressionType)Random.Range(0, 6);
+        switch (expresionType)
         {
-            case Expression.PLUS:
-                textMesh.text = "X+" + number;
-                break;
-            case Expression.MINUS:
-                textMesh.text = "X-" + number;
-                break;
-            case Expression.MULTIPLY:
-                textMesh.text = "X*" + number;
-                break;
-            case Expression.DIVIDE:
-                textMesh.text = "X/" + number;
-                break;
+            case ExpressionType.PLUS:
+                expression = new PlusExpression(value); break;
+            case ExpressionType.SUBTRACT:
+                expression = new SubtractExpression(value); break;
+            case ExpressionType.MULTIPLY:
+                expression = new MultiplyExpression(value); break;
+            case ExpressionType.DIVIDE:
+                expression = new DivideExpression(value); break;
+            case ExpressionType.EQUAL:
+                expression = new EqualExpression(value); break;
+            case ExpressionType.SQRT:
+                expression = new SquareRootExpression(value); break;
             default:
-                Debug.Log("Error in multiply plate");
+                Debug.Log("Error!! missing expression in multiply plate");
                 break;
         }
+        textMesh.text = expression.ToString();
+
     }
     public int CalculatePowerLevel()
     {
         int current_pl = PlayerController.instance.totalPowerLevel;
-        switch (expression)
-        {
-            case Expression.PLUS:
-                return current_pl + number;
-            case Expression.MINUS:
-                if (current_pl - number <= 0)
-                    return 1;
-                return current_pl - number;
-            case Expression.MULTIPLY:
-                return current_pl * number;
-            case Expression.DIVIDE:
-                if (current_pl / number <= 0)
-                    return 1;
-                return current_pl / number;
-        }
-        return 0; // => bug if got this
+        return expression.Perform(current_pl); // -> if get 0 mean bug
+
     }
     public int SpawnPlayerEntity(int amount)
     {
@@ -113,12 +103,12 @@ public class MultiplyPlate : MonoBehaviour
         PlayerController.instance.totalPowerLevel = calculatedPowerLevel;
         PlayerController.instance.UpdatePowerLevel();
     }
-    public void CalculatePowerLevelForEntity(int calculatedPowerLevel, int currentPowerLevel, int newSpawn)
+    private void CalculatePowerLevelForEntity(int calculatedPowerLevel, int currentPowerLevel, int newSpawn) // extremely bad practice here
     {
         List<GameObject> PlayerEntity = ObjectPooler.instance.GetActivePoolObjects("PlayerEntity");
         int activePlayerEntity = ObjectPooler.instance.ActivePooledObjectCount("PlayerEntity");
         int offset = Mathf.Abs(calculatedPowerLevel - currentPowerLevel - newSpawn);
-        int[] plArr = PartitionPowerLevel(offset, activePlayerEntity);
+        int[] powerLevelArr = PartitionPowerLevel(offset, activePlayerEntity);
         int index = 0;
         // increase
         if (calculatedPowerLevel > currentPowerLevel)
@@ -128,7 +118,7 @@ public class MultiplyPlate : MonoBehaviour
                 foreach (var entity in PlayerEntity) // get position with player entity
                 {
                     PlayerEntity playerEntity = entity.GetComponent<PlayerEntity>();
-                    playerEntity.powerLevel += plArr[index];
+                    playerEntity.powerLevel += powerLevelArr[index];
                     playerEntity.ChangeAppearance();
                     index++;
                 }
@@ -166,30 +156,30 @@ public class MultiplyPlate : MonoBehaviour
                 foreach (var entity in PlayerEntity)
                 {
                     PlayerEntity pe = entity.GetComponent<PlayerEntity>();
-                    pe.powerLevel -= plArr[index];
+                    pe.powerLevel -= powerLevelArr[index];
                     pe.ChangeAppearance(); // NOTE: move this somewhere else
                     index++;
                     if (pe.powerLevel <= 0)
                     {
                         killList.Add(pe);
-                        int pld = Mathf.Abs(pe.powerLevel);
-                        if (index != plArr.Length)
+                        int powerLevelDecrease = Mathf.Abs(pe.powerLevel);
+                        if (index != powerLevelArr.Length)
                         {
-                            plArr[index] += pld;
+                            powerLevelArr[index] += powerLevelDecrease;
                         }
                         else
                         {
-                            while (pld > 0)
+                            while (powerLevelDecrease > 0)
                             {
                                 // Debug.Log("loop offset > active");
                                 PlayerEntity rdEntity = PlayerEntity[Random.Range(0, PlayerEntity.Count)].GetComponent<PlayerEntity>();
                                 if (killList.Contains(rdEntity))
                                     continue;
-                                rdEntity.powerLevel -= pld;
+                                rdEntity.powerLevel -= powerLevelDecrease;
                                 rdEntity.ChangeAppearance();// NOTE: move this somewhere else
                                 if (rdEntity.powerLevel <= 0)
                                 {
-                                    pld = Mathf.Abs(rdEntity.powerLevel);
+                                    powerLevelDecrease = Mathf.Abs(rdEntity.powerLevel);
                                     killList.Add(rdEntity);
                                 }
                                 else break;
@@ -240,7 +230,7 @@ public class MultiplyPlate : MonoBehaviour
         }
     }
 
-    public bool GroupPlayerEntity(List<PlayerEntity> entities)
+    private bool GroupPlayerEntity(List<PlayerEntity> entities)
     {
         int sumPower = 0;
         int maxTier = 0;

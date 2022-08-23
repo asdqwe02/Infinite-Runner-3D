@@ -276,7 +276,7 @@ public class PlayerController : MonoBehaviour
         skill = () =>
         {
             OnSkillPress(skillCDTimeTotal);
-            StartCoroutine(LaserSkill(3));
+            StartCoroutine(LaserSkill(amount: 3)); // litearlly magic number
         };
     }
     public void SetUpBombSkill()

@@ -4188,7 +4188,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -9, y: -120.1}
+  m_AnchoredPosition: {x: -9, y: -120.100006}
   m_SizeDelta: {x: 301.1727, y: 88.9239}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &991095364
@@ -4237,20 +4237,8 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2100195326}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: ToggleFullScreen
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  m_IsOn: 1
+      m_Calls: []
+  m_IsOn: 0
 --- !u!1 &994866108
 GameObject:
   m_ObjectHideFlags: 0
@@ -4303,7 +4291,7 @@ MonoBehaviour:
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
-  m_ScreenMatchMode: 0
+  m_ScreenMatchMode: 2
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
@@ -4321,7 +4309,7 @@ Canvas:
   serializedVersion: 3
   m_RenderMode: 0
   m_Camera: {fileID: 1300914660}
-  m_PlaneDistance: 1
+  m_PlaneDistance: 3
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
@@ -7015,7 +7003,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -6.4818726, y: -17.89972}
+  m_AnchoredPosition: {x: -6.4819336, y: -17.899658}
   m_SizeDelta: {x: 580.1182, y: 458.1967}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1785759862
@@ -7068,7 +7056,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 617352e3dcd951c4e9745347eab5ddbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 60
+  _moveSpeed: 40
+  canvas: {fileID: 994866112}
 --- !u!1 &1833057132
 GameObject:
   m_ObjectHideFlags: 0
@@ -7778,6 +7767,7 @@ MonoBehaviour:
   - {fileID: 462831543}
   - {fileID: 1692291469}
   - {fileID: 1497698742}
+  fullScreenToggle: {fileID: 991095364}
 --- !u!114 &2100195326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7801,6 +7791,7 @@ MonoBehaviour:
   skillSelectScreen: {fileID: 0}
   scoreText: {fileID: 0}
   gameOverScoreText: {fileID: 0}
+  fullScreenToggle: {fileID: 0}
   settingData:
     masterVolume: 0
     musicVolume: 0
