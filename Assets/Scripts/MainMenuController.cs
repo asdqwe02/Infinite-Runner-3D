@@ -10,11 +10,17 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] Transform pressAnyKeyText;
     [SerializeField] List<Transform> menus;
     public Toggle fullScreenToggle;
-    private void Start() {
-        fullScreenToggle.isOn = GameManager.instance.fullScreen;
-        fullScreenToggle.onValueChanged.AddListener(delegate  {
-            GameManager.instance.ToggleFullScreen(fullScreenToggle.isOn);
-        });
+    private void Start()
+    {
+        if (fullScreenToggle != null)
+        {
+            fullScreenToggle.isOn = GameManager.instance.fullScreen;
+            fullScreenToggle.onValueChanged.AddListener(delegate
+            {
+                GameManager.instance.ToggleFullScreen(fullScreenToggle.isOn);
+            });
+
+        }
     }
     public void ShowMenu(int index)
     {
@@ -26,8 +32,9 @@ public class MainMenuController : MonoBehaviour
         AudioManager.instance.PlaySound(AudioManager.Sound.ButtonClick);
         menus[index].gameObject.SetActive(false);
     }
-    private void Update() {
-        if (Input.anyKey && !menus[0].gameObject.activeSelf)
+    private void Update()
+    {
+        if (Input.anyKey && menus.Count >0 && !menus[0].gameObject.activeSelf)
         {
             pressAnyKeyText.gameObject.SetActive(false);
             menus[0].gameObject.SetActive(true);

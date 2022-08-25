@@ -37,25 +37,8 @@ public class MultiplyPlate : MonoBehaviour
     public void RollMultiplyPlate()
     {
         value = Random.Range(2, 6);
-        expresionType = (ExpressionType)Random.Range(0, 6);
-        switch (expresionType)
-        {
-            case ExpressionType.PLUS:
-                expression = new PlusExpression(value); break;
-            case ExpressionType.SUBTRACT:
-                expression = new SubtractExpression(value); break;
-            case ExpressionType.MULTIPLY:
-                expression = new MultiplyExpression(value); break;
-            case ExpressionType.DIVIDE:
-                expression = new DivideExpression(value); break;
-            case ExpressionType.EQUAL:
-                expression = new EqualExpression(value); break;
-            case ExpressionType.SQRT:
-                expression = new SquareRootExpression(value); break;
-            default:
-                Debug.Log("Error!! missing expression in multiply plate");
-                break;
-        }
+        expression = (Expression)expressionWeightPool.RollPoolObjects().Clone();
+        expression.ChangeValue(value);
         textMesh.text = expression.ToString();
 
     }

@@ -5,12 +5,14 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using static Utility;
 public class ResolutionEventArgs : EventArgs
 {
     public int screenWidth;
     public int screenHeight;
     public bool fullScreen;
-    public ResolutionEventArgs(int width,int height, bool fullScreen) {
+    public ResolutionEventArgs(int width, int height, bool fullScreen)
+    {
         screenWidth = width;
         screenHeight = height;
         this.fullScreen = fullScreen;
@@ -29,7 +31,6 @@ public class GameManager : MonoBehaviour
     public Transform skillSelectScreen;
     public Transform scoreText;
     public Transform gameOverScoreText;
-    public Toggle fullScreenToggle;
     public SettingData settingData;
     private Material _pauseScreenMaterial;
     public event EventHandler<ResolutionEventArgs> ResolutionChanged;
@@ -50,6 +51,7 @@ public class GameManager : MonoBehaviour
         if (pauseScreen)
             _pauseScreenMaterial = pauseScreen.GetComponent<Image>().material;
         LoadSettingData();
+        expressionWeightPool.SortPool();
     }
     private void Update()
     {
@@ -93,11 +95,15 @@ public class GameManager : MonoBehaviour
         else AudioManager.instance.ResumeAllSound();
 
     }
+    public void PlayButtonClickSound()
+    {
+        AudioManager.instance.PlaySound(AudioManager.Sound.ButtonClick);
+    }
     public void RestartGame()
     {
         StopAllCoroutines();
         Time.timeScale = 1f;
-        AudioManager.instance.PlaySound(AudioManager.Sound.ButtonClick);
+        PlayButtonClickSound();
         // AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST02);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
@@ -112,7 +118,11 @@ public class GameManager : MonoBehaviour
     {
         StopAllCoroutines();
         Time.timeScale = 1f;
-        AudioManager.instance.PlaySound(AudioManager.Sound.ButtonClick);
+        PlayButtonClickSound();
+        if (pause)
+        {
+            AudioManager.instance.RemoveSoundTrackFilter();
+        }
         SceneManager.LoadScene(0);
         AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST02);
     }
@@ -121,11 +131,11 @@ public class GameManager : MonoBehaviour
         // Debug.Log($"fullscreen: {fullScreen}");
         // Debug.Log( $"resolution: {screenWidth}*{screenHeight}");
         Screen.SetResolution(screenWidth, screenHeight, fullScreen);
-        OnResolutionChange(new ResolutionEventArgs(screenWidth,screenHeight,fullScreen));
+        OnResolutionChange(new ResolutionEventArgs(screenWidth, screenHeight, fullScreen));
     }
     public void ToggleFullScreen(bool fullScreen) // bug
     {
-        Screen.fullScreenMode = fullScreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed; 
+        Screen.fullScreenMode = fullScreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
         this.fullScreen = fullScreen;
         SetResolution();
         // Debug.Log(Screen.fullScreen);
@@ -155,6 +165,6 @@ public class GameManager : MonoBehaviour
     }
     protected virtual void OnResolutionChange(ResolutionEventArgs e)
     {
-        ResolutionChanged?.Invoke(this,e);
+        ResolutionChanged?.Invoke(this, e);
     }
 }

@@ -4,6 +4,17 @@ using UnityEngine;
 
 public static class Utility
 {
+    public static WeightPooler<Expression> expressionWeightPool = new WeightPooler<Expression>(
+       new List<WeightObject<Expression>>()
+       {
+            new WeightObject<Expression>(new PlusExpression(), weight:50),
+            new WeightObject<Expression>(new SubtractExpression(), weight:50),
+            new WeightObject<Expression>(new MultiplyExpression(), weight:40),
+            new WeightObject<Expression>(new DivideExpression(), weight:40),
+            new WeightObject<Expression>(new EqualExpression(), weight:25),
+            new WeightObject<Expression>(new SquareRootExpression(), weight:25),
+       }
+    );
     public static List<T> GetRandomItemsFromList<T>(List<T> list, int number)
     {
         // this is the list we're going to remove picked items from
@@ -125,103 +136,7 @@ public static class Utility
         return new Color(red / 255.0f, green / 255.0f, blue / 255.0f);
     }
 
-    /*
-        EXPRESSION 
-        NOTE: might be implementing this wrong and dumb as f, might not even need the interface in this situation tbh
-    */
-    public interface IExpression
-    {
-        public abstract int Perform(int powerLevel);
-    }
-    public class Expression : IExpression
-    {
-        protected int value;
-        public Expression(int value)
-        {
-            this.value = value;
-        }
-        public Expression() { }
-        public virtual int Perform(int powerLevel) { return 0; }
-        public override string ToString()
-        {
-            return "Empty expression";
-        }
-    }
-    public class PlusExpression : Expression
-    {
-        public PlusExpression(int value) : base(value) { }
-        public override int Perform(int powerLevel)
-        {
-            return powerLevel + value;
-        }
-        public override string ToString()
-        {
-            return $"X+{value}";
-        }
-    }
-    public class MultiplyExpression : Expression
-    {
-        public MultiplyExpression(int value) : base(value) { }
 
-        public override int Perform(int powerLevel)
-        {
-            return powerLevel * value;
-        }
-        public override string ToString()
-        {
-            return $"X*{value}";
-        }
-    }
-    public class SubtractExpression : Expression
-    {
-        public SubtractExpression(int value) : base(value) { }
-
-        public override int Perform(int powerLevel)
-        {
-            return powerLevel - value <= 0 ? 1 : powerLevel - value;
-        }
-        public override string ToString()
-        {
-            return $"X-{value}";
-        }
-    }
-    public class DivideExpression : Expression
-    {
-        public DivideExpression(int value) : base(value) { }
-        public override int Perform(int powerLevel)
-        {
-            return powerLevel / value <= 1 ? 1 : powerLevel / value;
-        }
-        public override string ToString()
-        {
-            return $"X/{value}";
-        }
-    }
-    public class EqualExpression : Expression
-    {
-        public EqualExpression(int value) : base(value) { }
-        public override int Perform(int powerLevel)
-        {
-            return value;
-        }
-        public override string ToString()
-        {
-            return $"X={value}";
-        }
-    }
-    public class SquareRootExpression : Expression
-    {
-        public SquareRootExpression(int value) : base(value) { }
-
-        public override int Perform(int powerLevel)
-        {
-            int result = Mathf.RoundToInt(Mathf.Sqrt(powerLevel));
-            return result <= 0 ? 1 : result;
-        }
-        public override string ToString()
-        {
-            return "√X";
-        }
-    }
 }
+
 

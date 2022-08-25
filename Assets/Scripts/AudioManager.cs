@@ -24,7 +24,6 @@ public class AudioManager : MonoBehaviour
     private static GameObject _oneShotGameObject;
     private static AudioSource _oneShotAudioSource;
     private static SoundTrackObject _soundTrackObject;
-    private static AudioSource _soundTrackAudioSource;
     private List<GameObject> _spacialSounds;
     [Range(0f, 1f)]
     [SerializeField] private float _masterVolumeMultiplier;
@@ -370,5 +369,9 @@ public class AudioManager : MonoBehaviour
             MasterVolume = GameManager.instance.settingData.masterVolume;
             SountrackVolume = GameManager.instance.settingData.musicVolume;
         }
+    }
+    public void RemoveSoundTrackFilter()
+    {
+        _soundTrackObject.DisableFilter();
     }
 }
