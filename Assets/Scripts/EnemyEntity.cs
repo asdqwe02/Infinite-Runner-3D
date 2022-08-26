@@ -49,7 +49,7 @@ public class EnemyEntity : Entity
     }
     public void SetTarget()
     {
-        if (PlayerController.instance.totalPowerLevel >= 1)
+        if (PlayerController.instance.TotalPowerLevel >= 1)
         {
             List<EntitySpawnPosition> playerEntityPos = GetSpawnPositionWithEntity(PlayerController.instance.entitySpawnPositions);
             target = playerEntityPos[Random.Range(0, playerEntityPos.Count - 1)].entity;

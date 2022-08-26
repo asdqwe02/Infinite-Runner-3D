@@ -6,7 +6,7 @@ public class SettingData
 {
     public float masterVolume, musicVolume;
     public int screenWidth, screenHeight;
-    public bool fullScreen;
+    public bool fullScreen, bloom;
 
     public SettingData(AudioManager audioManager, GameManager gameManager)
     {
@@ -15,5 +15,6 @@ public class SettingData
         screenWidth = gameManager.screenWidth;
         screenHeight = gameManager.screenHeight;
         fullScreen = gameManager.fullScreen;
+        bloom = gameManager.bloom;
     }
 }

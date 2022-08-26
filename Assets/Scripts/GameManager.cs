@@ -6,6 +6,9 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using static Utility;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+
 public class ResolutionEventArgs : EventArgs
 {
     public int screenWidth;
@@ -23,6 +26,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public bool gameOver = false;
     public bool fullScreen;
+    public bool bloom;
     public bool pause;
     public uint score;
     public int screenWidth = 1920, screenHeight = 1080;
@@ -32,6 +36,7 @@ public class GameManager : MonoBehaviour
     public Transform scoreText;
     public Transform gameOverScoreText;
     public SettingData settingData;
+    public Volume volume;
     private Material _pauseScreenMaterial;
     public event EventHandler<ResolutionEventArgs> ResolutionChanged;
     private void Awake()
@@ -53,18 +58,15 @@ public class GameManager : MonoBehaviour
         LoadSettingData();
         expressionWeightPool.SortPool();
     }
-    private void Update()
+    private void Start()
     {
         if (PlayerController.instance)
         {
-            if (PlayerController.instance.totalPowerLevel <= 0 && !gameOver)
-            {
-                AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST03_1);
-                gameOver = true;
-                gameOverScreen.gameObject.SetActive(true);
-                StartCoroutine(PauseGame(1f));
-            }
+            PlayerController.instance.PlayerPowerLevelChanged += CheckLoseCondition;
         }
+    }
+    private void Update()
+    {
         if ((Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
             && pauseScreen != null
             && !gameOverScreen.gameObject.activeSelf
@@ -72,8 +74,8 @@ public class GameManager : MonoBehaviour
         {
             TogglePause();
         }
-        if (pause) // do this to have the pause screen shader effect
-            _pauseScreenMaterial.SetFloat("_UnscaledTime", Time.unscaledTime);
+        if (pause) // do this to have the pause screen shader effect 
+            _pauseScreenMaterial.SetFloat("_UnscaledTime", Time.unscaledTime); // explain: this make the shader effect not depend on scaled time 
 
     }
     public IEnumerator PauseGame(float slowDuration)
@@ -156,15 +158,39 @@ public class GameManager : MonoBehaviour
             screenHeight = settingData.screenHeight;
             screenWidth = settingData.screenWidth;
             fullScreen = settingData.fullScreen;
+            bloom = settingData.bloom;
+            ToggleBloom(bloom);
             SetResolution();
         }
     }
     public void SaveSettingData()
     {
-        SaveSystem.SaveSetting(AudioManager.instance, GameManager.instance);
+        SaveSystem.SaveSetting(AudioManager.instance, this);
     }
     protected virtual void OnResolutionChange(ResolutionEventArgs e)
     {
         ResolutionChanged?.Invoke(this, e);
+    }
+    public void CheckLoseCondition(object sender, int powerLevel)
+    {
+        // Debug.Log(powerLevel);
+        if (powerLevel <= 0 && !gameOver)
+        {
+            AudioManager.instance.PlaySoundTrack(AudioManager.SoundTrack.ST03_1);
+            gameOver = true;
+            gameOverScreen.gameObject.SetActive(true);
+            StartCoroutine(PauseGame(1f));
+        }
+    }
+    public void ToggleBloom(bool bloom)
+    {
+        this.bloom = bloom;
+        Bloom tempBloom = null;
+        if (volume)
+        {
+            volume.profile.TryGet<Bloom>(out tempBloom);
+            if (tempBloom)
+                tempBloom.active = bloom;
+        }
     }
 }

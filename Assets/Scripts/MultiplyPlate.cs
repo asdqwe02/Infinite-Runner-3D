@@ -44,7 +44,7 @@ public class MultiplyPlate : MonoBehaviour
     }
     public int CalculatePowerLevel()
     {
-        int current_pl = PlayerController.instance.totalPowerLevel;
+        int current_pl = PlayerController.instance.TotalPowerLevel;
         return expression.Perform(current_pl); // -> if get 0 mean bug
 
     }
@@ -77,13 +77,13 @@ public class MultiplyPlate : MonoBehaviour
     {
         int calculatedPowerLevel = CalculatePowerLevel();
         int EntitySpawned = 0;
-        if (PlayerController.instance.totalPowerLevel < calculatedPowerLevel)
+        if (PlayerController.instance.TotalPowerLevel < calculatedPowerLevel)
         {
-            EntitySpawned = SpawnPlayerEntity(calculatedPowerLevel - PlayerController.instance.totalPowerLevel);
+            EntitySpawned = SpawnPlayerEntity(calculatedPowerLevel - PlayerController.instance.TotalPowerLevel);
         }
-        CalculatePowerLevelForEntity(calculatedPowerLevel, PlayerController.instance.totalPowerLevel, EntitySpawned);
+        CalculatePowerLevelForEntity(calculatedPowerLevel, PlayerController.instance.TotalPowerLevel, EntitySpawned);
 
-        PlayerController.instance.totalPowerLevel = calculatedPowerLevel;
+        PlayerController.instance.TotalPowerLevel = calculatedPowerLevel;
         PlayerController.instance.UpdatePowerLevel();
     }
     private void CalculatePowerLevelForEntity(int calculatedPowerLevel, int currentPowerLevel, int newSpawn) // extremely bad practice here

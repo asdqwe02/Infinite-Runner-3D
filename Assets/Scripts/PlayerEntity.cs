@@ -32,7 +32,7 @@ public class PlayerEntity : Entity
     }
     void Start()
     {
-        PlayerController.instance.RotateEntity += RotateEntity;
+        PlayerController.instance.MovedSideway += RotateEntity;
         _default_pos = transform.localPosition;
         foreach (Transform child in transform)
         {
@@ -58,7 +58,7 @@ public class PlayerEntity : Entity
         {
             if (other.gameObject.CompareTag("Obstacle") && !enableShield)
             {
-                PlayerController.instance.totalPowerLevel -= powerLevel;
+                PlayerController.instance.TotalPowerLevel -= powerLevel;
                 PlayerController.instance.UpdatePowerLevel();
                 ParticleExplode();
                 Kill();
@@ -155,10 +155,10 @@ public class PlayerEntity : Entity
         powerLevel -= finalDamage;
         _shield -= Damage;
         if (powerLevel <= 0)
-            PlayerController.instance.totalPowerLevel -= oldPowerLevel;
+            PlayerController.instance.TotalPowerLevel -= oldPowerLevel;
         else
         {
-            PlayerController.instance.totalPowerLevel -= finalDamage;
+            PlayerController.instance.TotalPowerLevel -= finalDamage;
         }
         if (_shield <= 0 && enableShield)
         {

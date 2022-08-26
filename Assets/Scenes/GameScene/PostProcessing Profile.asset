@@ -44,7 +44,7 @@ MonoBehaviour:
     max: 1
   clamp:
     m_OverrideState: 0
-    m_Value: 65472
+    m_Value: 65463.37
     min: 0
   tint:
     m_OverrideState: 0
@@ -61,11 +61,11 @@ MonoBehaviour:
     min: 0
     max: 16
   dirtTexture:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {fileID: 0}
   dirtIntensity:
     m_OverrideState: 0
-    m_Value: 1
+    m_Value: 0.8
     min: 0
 --- !u!114 &4797542991343701495
 MonoBehaviour:
@@ -83,6 +83,6 @@ MonoBehaviour:
   m_AdvancedMode: 0
   intensity:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
     min: 0
     max: 1

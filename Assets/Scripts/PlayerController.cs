@@ -20,13 +20,14 @@ public class PlayerController : MonoBehaviour
     public float rotationAngle;
     private bool entityRotatedSideway;
     public static PlayerController instance;
-    public event EventHandler<RotateEventArgs> RotateEntity;
-    public event EventHandler<float> SkillButtonPress;
+    public event EventHandler<RotateEventArgs> MovedSideway;
+    public event EventHandler<float> SkillButtonPressed;
+    public event EventHandler<int> PlayerPowerLevelChanged;
     private Vector3 _sidewayDirection;
     public Transform entityPrefab;
     public Transform formation;
     public List<EntitySpawnPosition> entitySpawnPositions;
-    public int totalPowerLevel;
+    private int _totalPowerLevel;
     public int maxUnit;
     private TextMeshPro powerLevelText;
     public List<PlayerEntity> flyingEntity;
@@ -41,6 +42,16 @@ public class PlayerController : MonoBehaviour
     }
     [SerializeField] private TurningState _turnState; // might become useless
 
+    public int TotalPowerLevel
+    {
+        get => _totalPowerLevel; 
+        set 
+        {
+            _totalPowerLevel = value;
+            OnPlayerPowerLevelChange(_totalPowerLevel);
+        } 
+    }
+
     private void Awake()
     {
         SetUpLaserSkill();
@@ -51,7 +62,7 @@ public class PlayerController : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        totalPowerLevel = 1;
+        TotalPowerLevel = 1;
         _turnState = TurningState.forward;
         entityRotatedSideway = false;
         entitySpawnPositions = new List<EntitySpawnPosition>();
@@ -95,11 +106,11 @@ public class PlayerController : MonoBehaviour
             entityRotatedSideway = false;
             _turnState = TurningState.forward;
             _sidewayDirection = Vector3.zero;
-            OnRotateEntity(new RotateEventArgs(0f));
+            OnMovingSideway(new RotateEventArgs(0f));
 
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && !skillCD)
+        if (Input.GetKeyDown(KeyCode.Space) && !skillCD && !GameManager.instance.pause)
         {
             skill();
             skillCD = true;
@@ -113,18 +124,22 @@ public class PlayerController : MonoBehaviour
 
         if (_turnState != TurningState.forward && entityRotatedSideway == false)
         {
-            OnRotateEntity(new RotateEventArgs(_sidewayDirection.x * rotationAngle));
+            OnMovingSideway(new RotateEventArgs(_sidewayDirection.x * rotationAngle));
             entityRotatedSideway = true;
         }
     }
-    protected virtual void OnRotateEntity(RotateEventArgs e)
+    protected virtual void OnMovingSideway(RotateEventArgs e)
     {
         // Debug.Log("entity turning event called");
-        RotateEntity?.Invoke(this, e);
+        MovedSideway?.Invoke(this, e);
     }
     protected virtual void OnSkillPress(float e)
     {
-        SkillButtonPress?.Invoke(this, e);
+        SkillButtonPressed?.Invoke(this, e);
+    }
+    protected virtual void OnPlayerPowerLevelChange(int e)
+    {
+        PlayerPowerLevelChanged?.Invoke(this, e);
     }
     public EntitySpawnPosition GetEntitySpawnPosition()
     {
@@ -142,7 +157,7 @@ public class PlayerController : MonoBehaviour
     }
     public void UpdatePowerLevel()
     {
-        powerLevelText.text = totalPowerLevel.ToString();
+        powerLevelText.text = TotalPowerLevel.ToString();
 
         // debugging
         // int countpl = 0;
@@ -190,7 +205,7 @@ public class PlayerController : MonoBehaviour
         if (flyingEntity.Count == 0)
         {
             // abomination code
-            List<EntitySpawnPosition> entityPos = GetRandomItemsFromList<EntitySpawnPosition>(GetSpawnPositionWithEntity(entitySpawnPositions), amount);
+            List<EntitySpawnPosition> entityPos = GetRandomItemsFromList(GetSpawnPositionWithEntity(entitySpawnPositions), amount);
             List<LaserController> entityLaser = new List<LaserController>();
             foreach (var pos in entityPos)
             {

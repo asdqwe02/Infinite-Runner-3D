@@ -20,7 +20,7 @@ public class SkillCoolDownIcon : MonoBehaviour
     }
     private void Start()
     {
-        PlayerController.instance.SkillButtonPress += SetUpCoolDownEffect;
+        PlayerController.instance.SkillButtonPressed += SetUpCoolDownEffect;
     }
     // Update is called once per frame
     void Update()
